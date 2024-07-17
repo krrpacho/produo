@@ -1,38 +1,71 @@
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+body {
+  margin: 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-height: 100vh;
+  background-image: url(./img/v3.jpg);
+}
+
+.app-container {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+}
+
+.navbar-open .main-content,
+.navbar-collapsed .main-content {
+  transition: margin-left 0.3s ease, margin-right 0.3s ease;
+}
+
+.navbar-open .main-content {
+  margin-left: 200px; /* Adjust for open navbar */
+}
+
+.navbar-collapsed .main-content {
+  margin-left: 60px; /* Adjust for collapsed navbar */
+}
+
+.main-content {
+  padding: 20px;
+  width: 100%;
+  max-width: 1200px; /* Add a max-width to ensure the content is centered */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center content */
+  justify-content: flex-start; /* Keep content at the top */
+  margin-left: auto; /* Ensure content is centered */
+  margin-right: auto; /* Ensure content is centered */
+  transition: margin-left 0.3s ease;
+}
+
+.goal-section,
+.stopwatch-section,
+.calendar-section,
+.chart-section {
+  width: 100%;
+  max-width: 1000px;
+  display: flex;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  margin-bottom: 40px; /* Add space between sections */
+}
+
+.calendar-section {
+  max-width: 900px;
+  margin-bottom: 60px;
+}
+
+.switch-view-button {
+  margin: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
 }
 
 .App-link {
   color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
 }

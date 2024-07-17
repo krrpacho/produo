@@ -1,0 +1,70 @@
+body {
+  background-color: #fff;
+}
+
+.stopwatch-time {
+  text-align: center;
+  color: #ffffff;
+  font-size: 80px;
+  font-weight: bold; /* Make the time text thicker */
+  padding: 20px; /* Add space inside the element around the text */
+  margin: 20px 0; /* Add space outside the element around the text */
+}
+
+.stopwatch-buttons {
+  display: flex;
+  justify-content: center;
+}
+
+.stopwatch-buttons button {
+  margin: 20px;
+  border: none;
+  padding: 15px 15px;
+  cursor: pointer;
+  color: #fff;
+  border-radius: 20px;
+  font-size: 18px; /* Increase button text size */
+}
+
+.stopwatch-buttons button:first-child {
+  background-color: #6bd8cc;
+}
+
+.stopwatch-buttons button:last-child {
+  background: linear-gradient(to right, #6372ff 0%, #5ca9fb 100%);
+}
+
+.rectangle {
+  height: auto;
+  width: 700px;
+  border: 2px solid #ffffff; /* Thin white border */
+  background-color: transparent; /* Transparent background */
+  position: relative;
+  margin: 20px auto;
+  box-shadow: none;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  /* background-image: url(./img/im2.jpg); */
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 20px;
+  border:1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.stopwatch-title {
+  color: #ffffff;
+  font-size: 30px;
+  text-align: center;
+}
+
+.stopwatch-subtitle {
+  color: #dedede;
+  font-size: 20px;
+  text-align: center;
+  margin-top: 10px;
+}

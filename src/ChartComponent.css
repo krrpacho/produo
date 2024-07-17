@@ -1,0 +1,38 @@
+.chart-container {
+    width: 900px; /* Adjust the width as needed */
+    height: 800px; /* Adjust the height as needed */
+    margin: 0 auto; /* Center the chart horizontally */
+  }
+  
+  .chart-navigation {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+  }
+  
+  .chart-navigation button {
+    background: linear-gradient(to right, #6372ff 0%, #5ca9fb 100%);
+    color: white;
+    padding: 10px 20px;
+    margin: 0 5px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .chart-navigation button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
+
+  .date-range {
+    font-size: 16px;
+    font-weight: bold;
+    margin-right: auto; /* Align to the left */
+  }
+
+  
+  .date-range.white-text {
+    color: white; /* White text for the date range */
+  }
+  

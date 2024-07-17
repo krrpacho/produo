@@ -1,0 +1,28 @@
+.footer {
+    background-color: #0c0d10; /* Footer background color */
+    color: white; /* Text color */
+    text-align: center;
+    padding: 10px;
+    width: 100%;
+    margin-top: auto; /* Push the footer to the bottom of the page */
+  }
+  
+  .footer a {
+    color: #61dafb; /* Link color */
+    text-decoration: none;
+    margin: 0 10px;
+  }
+  
+  .footer a:hover {
+    text-decoration: underline;
+  }
+  
+  .footer p {
+    margin: 10px 0;
+  }
+  
+
+
+ 
+
+ 

@@ -1,25 +1,141 @@
-import logo from './logo.svg';
+import React, { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
+import Goals from './Goals';
+import NewGoals from './NewGoals';
+import EditGoalModal from './EditGoalModal';
+import Stopwatch from './Stopwatch';
+import CalendarComponent from './CalendarComponent';
+import ChartComponent from './ChartComponent';
+import MonthlyBarChart from './MonthlyBarChart';
+import YearlyBarChart from './YearlyBarChart';
+import Navbar from './Navbar';
+import Footer from './Footer';  // Import the Footer component
 import './App.css';
 
-function App() {
+const App = () => {
+  const [goals, setGoals] = useState([]);
+  const [activeGoal, setActiveGoal] = useState(null);
+  const [times, setTimes] = useState([]);
+  const [showNewGoal, setShowNewGoal] = useState(false);
+  const [editingGoal, setEditingGoal] = useState(null);
+  const [weeklyData, setWeeklyData] = useState({ labels: [], data: [] });
+  const [currentChart, setCurrentChart] = useState('weekly');
+  const [isNavbarOpen, setIsNavbarOpen] = useState(true);
+
+  const goalSectionRef = useRef(null);
+  const stopwatchSectionRef = useRef(null);
+  const calendarSectionRef = useRef(null);
+  const chartSectionRef = useRef(null);
+
+  useEffect(() => {
+    fetchGoals();
+    fetchTimes();
+    fetchWeeklySummary();
+  }, []);
+
+  const fetchGoals = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/api/goals');
+      setGoals(response.data);
+    } catch (error) {
+      console.error('Error fetching goals:', error);
+    }
+  };
+
+  const fetchTimes = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/api/times');
+      setTimes(response.data);
+    } catch (error) {
+      console.error('Error fetching times:', error);
+    }
+  };
+
+  const fetchWeeklySummary = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/api/times/weekly-summary');
+      const summary = response.data;
+      const labels = Object.keys(summary);
+      const data = Object.values(summary).map(seconds => seconds / 60); // Convert to minutes
+      setWeeklyData({ labels, data });
+    } catch (error) {
+      console.error('Error fetching weekly summary:', error);
+    }
+  };
+
+  const handleGoalSaved = () => {
+    setShowNewGoal(false);
+    fetchGoals();
+  };
+
+  const handleTimeAdded = (newTime) => {
+    fetchTimes();
+    fetchWeeklySummary();
+  };
+
+  const switchChart = (chartType) => {
+    setCurrentChart(chartType);
+  };
+
+  const scrollToSection = (section) => {
+    switch (section) {
+      case 'goalSection':
+        goalSectionRef.current.scrollIntoView({ behavior: 'smooth' });
+        break;
+      case 'stopwatchSection':
+        stopwatchSectionRef.current.scrollIntoView({ behavior: 'smooth' });
+        break;
+      case 'calendarSection':
+        calendarSectionRef.current.scrollIntoView({ behavior: 'smooth' });
+        break;
+      case 'chartSection':
+        chartSectionRef.current.scrollIntoView({ behavior: 'smooth' });
+        break;
+      default:
+        break;
+    }
+  };
+
+  const toggleNavbar = () => {
+    setIsNavbarOpen(!isNavbarOpen);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className={`app-container ${isNavbarOpen ? 'navbar-open' : 'navbar-collapsed'}`}>
+      <Navbar onScrollToSection={scrollToSection} toggleNavbar={toggleNavbar} />
+      <div className="main-content">
+        <div ref={goalSectionRef} className="goal-section">
+          <Goals
+            goals={goals}
+            onSelectGoal={setActiveGoal}
+            onDeleteGoal={fetchGoals}
+            onAddGoalClick={() => setShowNewGoal(true)}
+            onEditGoalClick={setEditingGoal}
+          />
+          {showNewGoal && <NewGoals onGoalSaved={handleGoalSaved} onClose={() => setShowNewGoal(false)} />}
+          {editingGoal && (
+            <EditGoalModal
+              goal={editingGoal}
+              onGoalUpdated={fetchGoals}
+              onClose={() => setEditingGoal(null)}
+            />
+          )}
+        </div>
+        <div ref={stopwatchSectionRef} className="stopwatch-section">
+          <Stopwatch activeGoal={activeGoal} onTimeAdded={handleTimeAdded} />
+        </div>
+        <div ref={calendarSectionRef} className="calendar-section">
+          <CalendarComponent times={times} onTimeDeleted={fetchTimes} />
+        </div>
+        <div ref={chartSectionRef} className="chart-section">
+          {currentChart === 'weekly' && <ChartComponent weeklyData={weeklyData} onSwitchChart={() => switchChart('monthly')} />}
+          {currentChart === 'monthly' && <MonthlyBarChart onSwitchChart={() => switchChart('yearly')} />}
+          {currentChart === 'yearly' && <YearlyBarChart onSwitchChart={() => switchChart('weekly')} />}
+        </div>
+        <Footer />  
+      </div>
     </div>
   );
-}
+};
 
-export default App;
+export default App;//

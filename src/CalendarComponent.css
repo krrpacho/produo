@@ -1,0 +1,40 @@
+.calendar-container {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.event-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.event-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.delete-icon {
+  cursor: pointer;
+  color: white; 
+}
+
+:root {
+  --fc-border-color: rgb(190, 190, 190);
+}
+
+
+/* Custom styles for FullCalendar */
+.fc .fc-toolbar-title,
+.fc .fc-daygrid-day-number,
+.fc .fc-col-header-cell-cushion,
+.fc .fc-daygrid-day-top {
+  color: white !important;
+}
+
+/* Custom styles for day cell */
+.fc .fc-daygrid-day {
+  border: 1px solid var(--fc-border-color);
+}
+
