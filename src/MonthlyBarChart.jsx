@@ -11,7 +11,14 @@ const MonthlyBarChart = ({ onSwitchChart }) => {
   const [dateRange, setDateRange] = useState('');
 
   useEffect(() => {
-    fetchMonthlyData(monthsAgo);
+    const storedData = localStorage.getItem(`monthlyData-${monthsAgo}`);
+    if (storedData) {
+      const { labels, data, dateRange } = JSON.parse(storedData);
+      setMonthlyData({ labels, data });
+      setDateRange(dateRange);
+    } else {
+      fetchMonthlyData(monthsAgo);
+    }
   }, [monthsAgo]);
 
   const fetchMonthlyData = async (monthsAgo) => {
@@ -25,7 +32,9 @@ const MonthlyBarChart = ({ onSwitchChart }) => {
       const sortedData = order.map(period => data[period] ? data[period] / 60 : 0); // Convert to minutes
 
       setMonthlyData({ labels: sortedLabels, data: sortedData });
-      setDateRange(calculateDateRange(monthsAgo));
+      const dateRange = calculateDateRange(monthsAgo);
+      setDateRange(dateRange);
+      localStorage.setItem(`monthlyData-${monthsAgo}`, JSON.stringify({ labels: sortedLabels, data: sortedData, dateRange }));
     } catch (error) {
       console.error('Error fetching monthly summary:', error);
     }
@@ -113,9 +122,8 @@ const MonthlyBarChart = ({ onSwitchChart }) => {
 
     const [dateRangeMonth, dateRangeYear] = dateRange.split(' ');
     const rangeMonthIndex = new Date(Date.parse(dateRangeMonth +" 1, 2022")).getMonth(); // Convert month name to index
-    const rangeYear = parseInt(dateRangeYear, 10);
 
-    return (rangeYear < currentYear) || (rangeYear === currentYear && rangeMonthIndex < currentMonth);
+    return !(rangeMonthIndex === currentMonth && dateRangeYear === String(currentYear));
   };
 
   return (

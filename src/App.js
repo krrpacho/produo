@@ -9,7 +9,7 @@ import ChartComponent from './ChartComponent';
 import MonthlyBarChart from './MonthlyBarChart';
 import YearlyBarChart from './YearlyBarChart';
 import Navbar from './Navbar';
-import Footer from './Footer';  // Import the Footer component
+import Footer from './Footer';  
 import './App.css';
 
 const App = () => {
@@ -31,7 +31,12 @@ const App = () => {
     fetchGoals();
     fetchTimes();
     fetchWeeklySummary();
-  }, []);
+    const savedGoalId = localStorage.getItem('activeGoalId');
+    if (savedGoalId) {
+      const savedGoal = goals.find(goal => goal.id === savedGoalId);
+      setActiveGoal(savedGoal);
+    }
+  }, [goals]);
 
   const fetchGoals = async () => {
     try {
@@ -56,7 +61,7 @@ const App = () => {
       const response = await axios.get('http://localhost:8080/api/times/weekly-summary');
       const summary = response.data;
       const labels = Object.keys(summary);
-      const data = Object.values(summary).map(seconds => seconds / 60); // Convert to minutes
+      const data = Object.values(summary).map(seconds => seconds / 60); 
       setWeeklyData({ labels, data });
     } catch (error) {
       console.error('Error fetching weekly summary:', error);
@@ -68,7 +73,7 @@ const App = () => {
     fetchGoals();
   };
 
-  const handleTimeAdded = (newTime) => {
+  const handleTimeAdded = () => {
     fetchTimes();
     fetchWeeklySummary();
   };
@@ -138,4 +143,4 @@ const App = () => {
   );
 };
 
-export default App;//
+export default App;//old

@@ -19,6 +19,7 @@ const NewGoals = ({ onGoalSaved, onClose }) => {
       setGoalName('');
       setTargetTime('');
       setColor('#000000');
+      localStorage.setItem('goals', JSON.stringify([...JSON.parse(localStorage.getItem('goals') || '[]'), newGoal]));
     } catch (error) {
       console.error('Error saving goal:', error);
     }

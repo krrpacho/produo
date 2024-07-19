@@ -13,7 +13,14 @@ const ChartComponent = ({ onSwitchChart }) => {
   const [dateRange, setDateRange] = useState('');
 
   useEffect(() => {
-    fetchWeeklyData(weeksAgo);
+    const storedData = localStorage.getItem(`weeklyData-${weeksAgo}`);
+    if (storedData) {
+      const { labels, data, dateRange } = JSON.parse(storedData);
+      setWeeklyData({ labels, data });
+      setDateRange(dateRange);
+    } else {
+      fetchWeeklyData(weeksAgo);
+    }
   }, [weeksAgo]);
 
   const fetchWeeklyData = async (weeksAgo) => {
@@ -23,7 +30,9 @@ const ChartComponent = ({ onSwitchChart }) => {
       const labels = daysOfWeek;
       const values = labels.map(day => data[day] / 60); // convert to minutes
       setWeeklyData({ labels, data: values });
-      setDateRange(calculateDateRange(weeksAgo));
+      const dateRange = calculateDateRange(weeksAgo);
+      setDateRange(dateRange);
+      localStorage.setItem(`weeklyData-${weeksAgo}`, JSON.stringify({ labels, data: values, dateRange }));
     } catch (error) {
       console.error('Error fetching weekly summary:', error);
     }
