@@ -38,7 +38,7 @@ const Stopwatch = ({ activeGoal, onTimeAdded }) => {
     setIsActive(false);
     try {
       const date = new Date().toISOString().split('T')[0];
-      const response = await axios.post('http://localhost:8080/api/times', {
+      const response = await axios.post('/api/times', {
         elapsedTime: `${Math.floor(time / 60)}m ${time % 60}s`,
         date: date,
         goalName: activeGoal.name,

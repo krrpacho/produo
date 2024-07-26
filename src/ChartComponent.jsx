@@ -25,7 +25,7 @@ const ChartComponent = ({ onSwitchChart }) => {
 
   const fetchWeeklyData = async (weeksAgo) => {
     try {
-      const response = await axios.get(`http://localhost:8080/api/times/weekly-summary?weeksAgo=${weeksAgo}`);
+      const response = await axios.get(`/api/times/weekly-summary?weeksAgo=${weeksAgo}`);
       const data = response.data;
       const labels = daysOfWeek;
       const values = labels.map(day => data[day] / 60); // convert to minutes
@@ -110,9 +110,7 @@ const ChartComponent = ({ onSwitchChart }) => {
   };
 
   const handleNextWeek = () => {
-    if (weeksAgo > 0) {
-      setWeeksAgo(weeksAgo - 1);
-    }
+    setWeeksAgo(Math.max(weeksAgo - 1, 0));
   };
 
   return (

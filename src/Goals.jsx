@@ -22,7 +22,7 @@ const Goals = ({ goals, onSelectGoal, onDeleteGoal, onAddGoalClick, onEditGoalCl
 
   const handleDelete = async (goalId) => {
     try {
-      const response = await axios.delete(`http://localhost:8080/api/goals/${goalId}`);
+      const response = await axios.delete(`/api/goals/${goalId}`);
       if (response.status === 204) {
         alert('Goal deleted successfully!');
         onDeleteGoal(goalId);

@@ -11,7 +11,7 @@ const EditGoalModal = ({ goal, onGoalUpdated, onClose }) => {
     e.preventDefault();
     try {
       const updatedGoal = { ...goal, name, targetTime, color };
-      const response = await axios.put(`http://localhost:8080/api/goals/${goal.id}`, updatedGoal);
+      const response = await axios.put(`/api/goals/${goal.id}`, updatedGoal);
       if (response.status === 200) {
         alert('Goal updated successfully!');
         onGoalUpdated();

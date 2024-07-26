@@ -43,7 +43,7 @@ const CalendarComponent = ({ times, onTimeDeleted }) => {
   const handleDelete = async (id) => {
     try {
       console.log('Deleting time with ID:', id);
-      const response = await axios.delete(`http://localhost:8080/api/times/${id}`);
+      const response = await axios.delete(`/api/times/${id}`);
       if (response.status === 204) {
         alert('Time deleted successfully!');
         const updatedEvents = events.filter(event => event.id !== id);

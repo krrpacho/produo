@@ -23,7 +23,7 @@ const MonthlyBarChart = ({ onSwitchChart }) => {
 
   const fetchMonthlyData = async (monthsAgo) => {
     try {
-      const response = await axios.get(`http://localhost:8080/api/times/monthly-summary?monthsAgo=${monthsAgo}`);
+      const response = await axios.get(`/api/times/monthly-summary?monthsAgo=${monthsAgo}`);
       const data = response.data;
 
       const order = ['1-8', '9-16', '17-23', '24-31'];

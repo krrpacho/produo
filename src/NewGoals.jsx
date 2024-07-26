@@ -14,7 +14,7 @@ const NewGoals = ({ onGoalSaved, onClose }) => {
         targetTime,
         color
       };
-      await axios.post('http://localhost:8080/api/goals', newGoal);
+      await axios.post('/api/goals', newGoal);
       onGoalSaved();
       setGoalName('');
       setTargetTime('');

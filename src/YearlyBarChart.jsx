@@ -19,7 +19,7 @@ const YearlyBarChart = ({ onSwitchChart }) => {
 
   const fetchYearlyData = async (yearsAgo) => {
     try {
-      const response = await axios.get(`http://localhost:8080/api/times/yearly-summary?yearsAgo=${yearsAgo}`);
+      const response = await axios.get(`/api/times/yearly-summary?yearsAgo=${yearsAgo}`);
       const data = response.data;
 
       const months = [
