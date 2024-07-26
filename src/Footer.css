@@ -1,14 +1,14 @@
 .footer {
-    background-color: #0c0d10; /* Footer background color */
-    color: white; /* Text color */
+    background-color: #0c0d10; 
+    color: white; 
     text-align: center;
     padding: 10px;
     width: 100%;
-    margin-top: auto; /* Push the footer to the bottom of the page */
+    margin-top: auto; 
   }
   
   .footer a {
-    color: #61dafb; /* Link color */
+    color: #61dafb; 
     text-decoration: none;
     margin: 0 10px;
   }
@@ -21,14 +21,13 @@
     margin: 10px 0;
   }
 
-  /* For Mobile */
+
 @media screen and (max-width: 540px) {
   .view {
       width: 400px;
   }
 }
 
-/* For Tablets */
 @media screen and (min-width: 540px) and (max-width: 780px) {
   .view {
       width: 600px;

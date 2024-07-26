@@ -81,4 +81,4 @@ const Stopwatch = ({ activeGoal, onTimeAdded }) => {
   );
 };
 
-export default Stopwatch;//old
+export default Stopwatch;

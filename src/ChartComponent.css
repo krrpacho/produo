@@ -1,7 +1,7 @@
 .chart-container {
-    width: 900px; /* Adjust the width as needed */
-    height: 800px; /* Adjust the height as needed */
-    margin: 0 auto; /* Center the chart horizontally */
+    width: 900px;
+    height: 800px;
+    margin: 0 auto; 
   }
   
   .chart-navigation {
@@ -28,22 +28,20 @@
   .date-range {
     font-size: 16px;
     font-weight: bold;
-    margin-right: auto; /* Align to the left */
+    margin-right: auto; 
   }
 
   
   .date-range.white-text {
-    color: white; /* White text for the date range */
+    color: white; 
   }
   
-  /* For Mobile */
 @media screen and (max-width: 540px) {
   .view {
       width: 400px;
   }
 }
 
-/* For Tablets */
 @media screen and (min-width: 540px) and (max-width: 780px) {
   .view {
       width: 600px;

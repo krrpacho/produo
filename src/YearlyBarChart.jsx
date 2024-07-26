@@ -8,7 +8,6 @@ const YearlyBarChart = ({ onSwitchChart }) => {
   const chartInstanceRef = useRef(null);
   const [yearlyData, setYearlyData] = useState({ labels: [], data: [] });
   const [yearsAgo, setYearsAgo] = useState(() => {
-    // Load yearsAgo from local storage or default to 0
     return parseInt(localStorage.getItem('yearsAgo') || '0', 10);
   });
   const [dateRange, setDateRange] = useState('');
@@ -72,25 +71,25 @@ const YearlyBarChart = ({ onSwitchChart }) => {
             y: {
               beginAtZero: true,
               ticks: {
-                color: 'white' // Y-axis text color
+                color: 'white' 
               },
               grid: {
-                color: 'white' // Y-axis grid color
+                color: 'white' 
               }
             },
             x: {
               ticks: {
-                color: 'white' // X-axis text color
+                color: 'white' 
               },
               grid: {
-                color: 'white' // X-axis grid color
+                color: 'white' 
               }
             }
           },
           plugins: {
             legend: {
               labels: {
-                color: 'white' // Legend text color
+                color: 'white' 
               }
             }
           }
@@ -102,13 +101,13 @@ const YearlyBarChart = ({ onSwitchChart }) => {
   const handlePreviousYear = () => {
     const newYearsAgo = yearsAgo + 1;
     setYearsAgo(newYearsAgo);
-    localStorage.setItem('yearsAgo', newYearsAgo); // Save to local storage
+    localStorage.setItem('yearsAgo', newYearsAgo);
   };
 
   const handleNextYear = () => {
     const newYearsAgo = yearsAgo - 1;
     setYearsAgo(newYearsAgo);
-    localStorage.setItem('yearsAgo', newYearsAgo); // Save to local storage
+    localStorage.setItem('yearsAgo', newYearsAgo);
   };
 
   const canGoNextYear = () => {

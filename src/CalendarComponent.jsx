@@ -10,18 +10,15 @@ const CalendarComponent = ({ times, onTimeDeleted }) => {
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
-    // Load events from local storage on component mount
     const savedEvents = localStorage.getItem('calendarEvents');
     if (savedEvents) {
       setEvents(JSON.parse(savedEvents));
     } else {
-      // If no saved events, fetch from API
       fetchEvents();
     }
   }, []);
 
   useEffect(() => {
-    // Update local storage whenever events change
     localStorage.setItem('calendarEvents', JSON.stringify(events));
   }, [events]);
 
@@ -74,7 +71,6 @@ const CalendarComponent = ({ times, onTimeDeleted }) => {
     );
   };
 
-  // Convert times prop to events format
   const formattedEvents = times.map(time => ({
     id: time.id,
     title: time.elapsedTime,

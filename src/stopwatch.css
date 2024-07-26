@@ -6,9 +6,9 @@ body {
   text-align: center;
   color: #ffffff;
   font-size: 80px;
-  font-weight: bold; /* Make the time text thicker */
-  padding: 20px; /* Add space inside the element around the text */
-  margin: 20px 0; /* Add space outside the element around the text */
+  font-weight: bold; 
+  padding: 20px;
+  margin: 20px 0; 
 }
 
 .stopwatch-buttons {
@@ -23,7 +23,7 @@ body {
   cursor: pointer;
   color: #fff;
   border-radius: 20px;
-  font-size: 18px; /* Increase button text size */
+  font-size: 18px; 
 }
 
 .stopwatch-buttons button:first-child {
@@ -37,8 +37,8 @@ body {
 .rectangle {
   height: auto;
   width: 700px;
-  border: 2px solid #ffffff; /* Thin white border */
-  background-color: transparent; /* Transparent background */
+  border: 2px solid #ffffff; 
+  background-color: transparent; 
   position: relative;
   margin: 20px auto;
   box-shadow: none;
@@ -47,7 +47,6 @@ body {
   flex-direction: column;
   align-items: center;
   padding: 20px;
-  /* background-image: url(./img/im2.jpg); */
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -69,14 +68,13 @@ body {
   margin-top: 10px;
 }
 
-/* For Mobile */
+
 @media screen and (max-width: 540px) {
   .view {
       width: 400px;
   }
 }
 
-/* For Tablets */
 @media screen and (min-width: 540px) and (max-width: 780px) {
   .view {
       width: 600px;

@@ -28,7 +28,7 @@ const ChartComponent = ({ onSwitchChart }) => {
       const response = await axios.get(`/api/times/weekly-summary?weeksAgo=${weeksAgo}`);
       const data = response.data;
       const labels = daysOfWeek;
-      const values = labels.map(day => data[day] / 60); // convert to minutes
+      const values = labels.map(day => data[day] / 60); 
       setWeeklyData({ labels, data: values });
       const dateRange = calculateDateRange(weeksAgo);
       setDateRange(dateRange);
@@ -78,25 +78,25 @@ const ChartComponent = ({ onSwitchChart }) => {
             y: {
               beginAtZero: true,
               ticks: {
-                color: 'white' // Y-axis text color
+                color: 'white' 
               },
               grid: {
-                color: 'white' // Y-axis grid color
+                color: 'white' 
               }
             },
             x: {
               ticks: {
-                color: 'white' // X-axis text color
+                color: 'white' 
               },
               grid: {
-                color: 'white' // X-axis grid color
+                color: 'white' 
               }
             }
           },
           plugins: {
             legend: {
               labels: {
-                color: 'white' // Legend text color
+                color: 'white' 
               }
             }
           }

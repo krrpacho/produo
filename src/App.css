@@ -23,23 +23,23 @@ body {
 }
 
 .navbar-open .main-content {
-  margin-left: 200px; /* Adjust for open navbar */
+  margin-left: 200px; 
 }
 
 .navbar-collapsed .main-content {
-  margin-left: 60px; /* Adjust for collapsed navbar */
+  margin-left: 60px; 
 }
 
 .main-content {
   padding: 20px;
   width: 100%;
-  max-width: 1200px; /* Add a max-width to ensure the content is centered */
+  max-width: 1200px; 
   display: flex;
   flex-direction: column;
-  align-items: center; /* Center content */
-  justify-content: flex-start; /* Keep content at the top */
-  margin-left: auto; /* Ensure content is centered */
-  margin-right: auto; /* Ensure content is centered */
+  align-items: center;
+  justify-content: flex-start; 
+  margin-left: auto; 
+  margin-right: auto; 
   transition: margin-left 0.3s ease;
 }
 
@@ -51,7 +51,7 @@ body {
   max-width: 1000px;
   display: flex;
   justify-content: center;
-  margin-bottom: 40px; /* Add space between sections */
+  margin-bottom: 40px; 
 }
 
 .calendar-section {
@@ -70,14 +70,12 @@ body {
   color: #61dafb;
 }
 
-/* For Mobile */
 @media screen and (max-width: 540px) {
   .view {
       width: 400px;
   }
 }
 
-/* For Tablets */
 @media screen and (min-width: 540px) and (max-width: 780px) {
   .view {
       width: 600px;

@@ -29,7 +29,7 @@ const MonthlyBarChart = ({ onSwitchChart }) => {
       const order = ['1-8', '9-16', '17-23', '24-31'];
 
       const sortedLabels = order;
-      const sortedData = order.map(period => data[period] ? data[period] / 60 : 0); // Convert to minutes
+      const sortedData = order.map(period => data[period] ? data[period] / 60 : 0);
 
       setMonthlyData({ labels: sortedLabels, data: sortedData });
       const dateRange = calculateDateRange(monthsAgo);
@@ -80,25 +80,25 @@ const MonthlyBarChart = ({ onSwitchChart }) => {
             y: {
               beginAtZero: true,
               ticks: {
-                color: 'white' // Y-axis text color
+                color: 'white' 
               },
               grid: {
-                color: 'white' // Y-axis grid color
+                color: 'white' 
               }
             },
             x: {
               ticks: {
-                color: 'white' // X-axis text color
+                color: 'white' 
               },
               grid: {
-                color: 'white' // X-axis grid color
+                color: 'white' 
               }
             }
           },
           plugins: {
             legend: {
               labels: {
-                color: 'white' // Legend text color
+                color: 'white' 
               }
             }
           }
@@ -121,8 +121,7 @@ const MonthlyBarChart = ({ onSwitchChart }) => {
     const currentYear = now.getFullYear();
 
     const [dateRangeMonth, dateRangeYear] = dateRange.split(' ');
-    const rangeMonthIndex = new Date(Date.parse(dateRangeMonth +" 1, 2022")).getMonth(); // Convert month name to index
-
+    const rangeMonthIndex = new Date(Date.parse(dateRangeMonth +" 1, 2022")).getMonth(); 
     return !(rangeMonthIndex === currentMonth && dateRangeYear === String(currentYear));
   };
 
