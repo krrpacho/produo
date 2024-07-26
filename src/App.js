@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
+import axiosInstance from './axiosConfig';
 import Goals from './Goals';
 import NewGoals from './NewGoals';
 import EditGoalModal from './EditGoalModal';

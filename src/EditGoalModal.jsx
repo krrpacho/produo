@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import axiosInstance from './axiosConfig';
 import './EditGoalModal.css';
 
 const EditGoalModal = ({ goal, onGoalUpdated, onClose }) => {

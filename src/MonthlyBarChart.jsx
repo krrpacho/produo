@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import Chart from 'chart.js/auto';
-import axios from 'axios';
+import axiosInstance from './axiosConfig';
 import './ChartComponent.css';
 
 const MonthlyBarChart = ({ onSwitchChart }) => {

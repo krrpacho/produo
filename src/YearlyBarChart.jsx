@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import Chart from 'chart.js/auto';
-import axios from 'axios';
+import axiosInstance from './axiosConfig';
 import './ChartComponent.css';
 
 const YearlyBarChart = ({ onSwitchChart }) => {
@@ -29,8 +29,7 @@ const YearlyBarChart = ({ onSwitchChart }) => {
       const sortedLabels = months;
       const sortedData = months.map((month, index) =>
         data[String(index + 1).padStart(2, '0')] ? data[String(index + 1).padStart(2, '0')] / 60 : 0
-      ); // Convert to minutes
-
+      ); 
       setYearlyData({ labels: sortedLabels, data: sortedData });
       setDateRange(calculateDateRange(yearsAgo));
     } catch (error) {
