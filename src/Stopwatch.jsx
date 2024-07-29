@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from './axiosConfig';
 import './stopwatch.css';
 
 const Stopwatch = ({ activeGoal, onTimeAdded }) => {
@@ -38,7 +38,7 @@ const Stopwatch = ({ activeGoal, onTimeAdded }) => {
     setIsActive(false);
     try {
       const date = new Date().toISOString().split('T')[0];
-      const response = await axios.post('/api/times', {
+      const response = await axiosInstance.post('/api/times', {
         elapsedTime: `${Math.floor(time / 60)}m ${time % 60}s`,
         date: date,
         goalName: activeGoal.name,
@@ -61,7 +61,7 @@ const Stopwatch = ({ activeGoal, onTimeAdded }) => {
   return (
     <div className="rectangle">
       <div className="stopwatch-container">
-        <h1 className="stopwatch-title">Currently Working On: {activeGoal ? activeGoal.name : 'No goal selected'}</h1>
+        <h1 className="stopwatch-title">Currently working on: {activeGoal ? activeGoal.name : 'No goal selected'}</h1>
         {activeGoal && <h2 className="stopwatch-subtitle">Time you wanted to spend: {activeGoal.targetTime}</h2>}
         <p className="stopwatch-time">
           {hours.toString().padStart(2, "0")}:

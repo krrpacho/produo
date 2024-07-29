@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import axios from 'axios';
+import axiosInstance from './axiosConfig';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import './CalendarComponent.css';
@@ -24,7 +24,7 @@ const CalendarComponent = ({ times, onTimeDeleted }) => {
 
   const fetchEvents = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/api/times');
+      const response = await axiosInstance.get('http://localhost:8080/api/times');
       const fetchedEvents = response.data.map(time => ({
         id: time.id,
         title: time.elapsedTime,
@@ -40,7 +40,7 @@ const CalendarComponent = ({ times, onTimeDeleted }) => {
   const handleDelete = async (id) => {
     try {
       console.log('Deleting time with ID:', id);
-      const response = await axios.delete(`/api/times/${id}`);
+      const response = await axiosInstance.delete(`/api/times/${id}`);
       if (response.status === 204) {
         alert('Time deleted successfully!');
         const updatedEvents = events.filter(event => event.id !== id);

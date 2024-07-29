@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import axiosInstance from './axiosConfig';
 import './NewGoals.css';
 
 const NewGoals = ({ onGoalSaved, onClose }) => {
@@ -14,7 +14,7 @@ const NewGoals = ({ onGoalSaved, onClose }) => {
         targetTime,
         color
       };
-      await axios.post('/api/goals', newGoal);
+      const response = await axiosInstance.post('/api/goals', newGoal);
       onGoalSaved();
       setGoalName('');
       setTargetTime('');

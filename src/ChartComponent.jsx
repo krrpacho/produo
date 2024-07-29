@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import Chart from 'chart.js/auto';
-import axios from 'axios';
+import axiosInstance from './axiosConfig';
 import './ChartComponent.css';
 
 const daysOfWeek = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
@@ -25,7 +25,7 @@ const ChartComponent = ({ onSwitchChart }) => {
 
   const fetchWeeklyData = async (weeksAgo) => {
     try {
-      const response = await axios.get(`/api/times/weekly-summary?weeksAgo=${weeksAgo}`);
+      const response = await axiosInstance.get(`/api/times/weekly-summary?weeksAgo=${weeksAgo}`);
       const data = response.data;
       const labels = daysOfWeek;
       const values = labels.map(day => data[day] / 60); 

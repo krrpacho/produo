@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import axiosInstance from './axiosConfig';
 import './EditGoalModal.css';
 
 const EditGoalModal = ({ goal, onGoalUpdated, onClose }) => {
@@ -11,7 +11,7 @@ const EditGoalModal = ({ goal, onGoalUpdated, onClose }) => {
     e.preventDefault();
     try {
       const updatedGoal = { ...goal, name, targetTime, color };
-      const response = await axios.put(`/api/goals/${goal.id}`, updatedGoal);
+      const response = await axiosInstance.put(`/api/goals/${goal.id}`, updatedGoal);
       if (response.status === 200) {
         alert('Goal updated successfully!');
         onGoalUpdated();

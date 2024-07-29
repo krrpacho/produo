@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import Chart from 'chart.js/auto';
-import axios from 'axios';
+import axiosInstance from './axiosConfig';
 import './ChartComponent.css';
 
 const MonthlyBarChart = ({ onSwitchChart }) => {
@@ -23,7 +23,7 @@ const MonthlyBarChart = ({ onSwitchChart }) => {
 
   const fetchMonthlyData = async (monthsAgo) => {
     try {
-      const response = await axios.get(`/api/times/monthly-summary?monthsAgo=${monthsAgo}`);
+      const response = await axiosInstance.get(`/api/times/monthly-summary?monthsAgo=${monthsAgo}`);
       const data = response.data;
 
       const order = ['1-8', '9-16', '17-23', '24-31'];
