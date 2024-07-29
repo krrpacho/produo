@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axiosInstance from './axiosConfig';
+import axios from 'axios';
 import './NewGoals.css';
 
 const NewGoals = ({ onGoalSaved, onClose }) => {

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import axiosInstance from './axiosConfig';
+import axios from 'axios';
 import './Goals.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';

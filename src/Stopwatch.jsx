@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axiosInstance from './axiosConfig';
+import axios from 'axios';
 import './stopwatch.css';
 
 const Stopwatch = ({ activeGoal, onTimeAdded }) => {
