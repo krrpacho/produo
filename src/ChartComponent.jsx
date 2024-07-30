@@ -13,14 +13,7 @@ const ChartComponent = ({ onSwitchChart }) => {
   const [dateRange, setDateRange] = useState('');
 
   useEffect(() => {
-    const storedData = localStorage.getItem(`weeklyData-${weeksAgo}`);
-    if (storedData) {
-      const { labels, data, dateRange } = JSON.parse(storedData);
-      setWeeklyData({ labels, data });
-      setDateRange(dateRange);
-    } else {
-      fetchWeeklyData(weeksAgo);
-    }
+    fetchWeeklyData(weeksAgo);
   }, [weeksAgo]);
 
   const fetchWeeklyData = async (weeksAgo) => {
@@ -30,9 +23,7 @@ const ChartComponent = ({ onSwitchChart }) => {
       const labels = daysOfWeek;
       const values = labels.map(day => data[day] / 60); 
       setWeeklyData({ labels, data: values });
-      const dateRange = calculateDateRange(weeksAgo);
-      setDateRange(dateRange);
-      localStorage.setItem(`weeklyData-${weeksAgo}`, JSON.stringify({ labels, data: values, dateRange }));
+      setDateRange(calculateDateRange(weeksAgo));
     } catch (error) {
       console.error('Error fetching weekly summary:', error);
     }
@@ -78,25 +69,25 @@ const ChartComponent = ({ onSwitchChart }) => {
             y: {
               beginAtZero: true,
               ticks: {
-                color: 'white' 
+                color: 'white' // Y-axis text color
               },
               grid: {
-                color: 'white' 
+                color: 'white' // Y-axis grid color
               }
             },
             x: {
               ticks: {
-                color: 'white' 
+                color: 'white' // X-axis text color
               },
               grid: {
-                color: 'white' 
+                color: 'white' // X-axis grid color
               }
             }
           },
           plugins: {
             legend: {
               labels: {
-                color: 'white' 
+                color: 'white' // Legend text color
               }
             }
           }
@@ -110,7 +101,9 @@ const ChartComponent = ({ onSwitchChart }) => {
   };
 
   const handleNextWeek = () => {
-    setWeeksAgo(Math.max(weeksAgo - 1, 0));
+    if (weeksAgo > 0) {
+      setWeeksAgo(weeksAgo - 1);
+    }
   };
 
   return (

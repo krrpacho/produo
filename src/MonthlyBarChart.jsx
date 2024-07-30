@@ -11,14 +11,7 @@ const MonthlyBarChart = ({ onSwitchChart }) => {
   const [dateRange, setDateRange] = useState('');
 
   useEffect(() => {
-    const storedData = localStorage.getItem(`monthlyData-${monthsAgo}`);
-    if (storedData) {
-      const { labels, data, dateRange } = JSON.parse(storedData);
-      setMonthlyData({ labels, data });
-      setDateRange(dateRange);
-    } else {
-      fetchMonthlyData(monthsAgo);
-    }
+    fetchMonthlyData(monthsAgo);
   }, [monthsAgo]);
 
   const fetchMonthlyData = async (monthsAgo) => {
@@ -29,12 +22,10 @@ const MonthlyBarChart = ({ onSwitchChart }) => {
       const order = ['1-8', '9-16', '17-23', '24-31'];
 
       const sortedLabels = order;
-      const sortedData = order.map(period => data[period] ? data[period] / 60 : 0);
+      const sortedData = order.map(period => data[period] ? data[period] / 60 : 0); 
 
       setMonthlyData({ labels: sortedLabels, data: sortedData });
-      const dateRange = calculateDateRange(monthsAgo);
-      setDateRange(dateRange);
-      localStorage.setItem(`monthlyData-${monthsAgo}`, JSON.stringify({ labels: sortedLabels, data: sortedData, dateRange }));
+      setDateRange(calculateDateRange(monthsAgo));
     } catch (error) {
       console.error('Error fetching monthly summary:', error);
     }
@@ -80,25 +71,25 @@ const MonthlyBarChart = ({ onSwitchChart }) => {
             y: {
               beginAtZero: true,
               ticks: {
-                color: 'white' 
+                color: 'white' // Y-axis text color
               },
               grid: {
-                color: 'white' 
+                color: 'white' // Y-axis grid color
               }
             },
             x: {
               ticks: {
-                color: 'white' 
+                color: 'white' // X-axis text color
               },
               grid: {
-                color: 'white' 
+                color: 'white' // X-axis grid color
               }
             }
           },
           plugins: {
             legend: {
               labels: {
-                color: 'white' 
+                color: 'white' // Legend text color
               }
             }
           }
@@ -121,8 +112,10 @@ const MonthlyBarChart = ({ onSwitchChart }) => {
     const currentYear = now.getFullYear();
 
     const [dateRangeMonth, dateRangeYear] = dateRange.split(' ');
-    const rangeMonthIndex = new Date(Date.parse(dateRangeMonth +" 1, 2022")).getMonth(); 
-    return !(rangeMonthIndex === currentMonth && dateRangeYear === String(currentYear));
+    const rangeMonthIndex = new Date(Date.parse(dateRangeMonth +" 1, 2022")).getMonth(); // Convert month name to index
+    const rangeYear = parseInt(dateRangeYear, 10);
+
+    return (rangeYear < currentYear) || (rangeYear === currentYear && rangeMonthIndex < currentMonth);
   };
 
   return (

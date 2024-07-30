@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import axiosInstance from './axiosConfig';
@@ -7,35 +7,6 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import './CalendarComponent.css';
 
 const CalendarComponent = ({ times, onTimeDeleted }) => {
-  const [events, setEvents] = useState([]);
-
-  useEffect(() => {
-    const savedEvents = localStorage.getItem('calendarEvents');
-    if (savedEvents) {
-      setEvents(JSON.parse(savedEvents));
-    } else {
-      fetchEvents();
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('calendarEvents', JSON.stringify(events));
-  }, [events]);
-
-  const fetchEvents = async () => {
-    try {
-      const response = await axiosInstance.get('http://localhost:8080/api/times');
-      const fetchedEvents = response.data.map(time => ({
-        id: time.id,
-        title: time.elapsedTime,
-        start: time.date,
-        color: time.color
-      }));
-      setEvents(fetchedEvents);
-    } catch (error) {
-      console.error('Error fetching events:', error);
-    }
-  };
 
   const handleDelete = async (id) => {
     try {
@@ -43,8 +14,6 @@ const CalendarComponent = ({ times, onTimeDeleted }) => {
       const response = await axiosInstance.delete(`/api/times/${id}`);
       if (response.status === 204) {
         alert('Time deleted successfully!');
-        const updatedEvents = events.filter(event => event.id !== id);
-        setEvents(updatedEvents);
         onTimeDeleted(id);
       } else {
         alert('Failed to delete time.');
@@ -71,7 +40,7 @@ const CalendarComponent = ({ times, onTimeDeleted }) => {
     );
   };
 
-  const formattedEvents = times.map(time => ({
+  const events = times.map(time => ({
     id: time.id,
     title: time.elapsedTime,
     start: time.date,
@@ -83,7 +52,7 @@ const CalendarComponent = ({ times, onTimeDeleted }) => {
       <FullCalendar
         plugins={[dayGridPlugin]}
         initialView="dayGridMonth"
-        events={formattedEvents}
+        events={events}
         eventContent={renderEventContent}
       />
     </div>
@@ -91,3 +60,4 @@ const CalendarComponent = ({ times, onTimeDeleted }) => {
 };
 
 export default CalendarComponent;
+

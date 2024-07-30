@@ -14,12 +14,11 @@ const NewGoals = ({ onGoalSaved, onClose }) => {
         targetTime,
         color
       };
-      const response = await axiosInstance.post('/api/goals', newGoal);
+      await axiosInstance.post('/api/goals', newGoal);
       onGoalSaved();
       setGoalName('');
       setTargetTime('');
       setColor('#000000');
-      localStorage.setItem('goals', JSON.stringify([...JSON.parse(localStorage.getItem('goals') || '[]'), newGoal]));
     } catch (error) {
       console.error('Error saving goal:', error);
     }

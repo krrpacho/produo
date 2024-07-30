@@ -31,12 +31,7 @@ const App = () => {
     fetchGoals();
     fetchTimes();
     fetchWeeklySummary();
-    const savedGoalId = localStorage.getItem('activeGoalId');
-    if (savedGoalId) {
-      const savedGoal = goals.find(goal => goal.id === savedGoalId);
-      setActiveGoal(savedGoal);
-    }
-  }, [goals]);
+  }, []);
 
   const fetchGoals = async () => {
     try {
@@ -73,7 +68,7 @@ const App = () => {
     fetchGoals();
   };
 
-  const handleTimeAdded = () => {
+  const handleTimeAdded = (newTime) => {
     fetchTimes();
     fetchWeeklySummary();
   };
@@ -143,4 +138,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default App;//

@@ -7,9 +7,7 @@ const YearlyBarChart = ({ onSwitchChart }) => {
   const chartRef = useRef(null);
   const chartInstanceRef = useRef(null);
   const [yearlyData, setYearlyData] = useState({ labels: [], data: [] });
-  const [yearsAgo, setYearsAgo] = useState(() => {
-    return parseInt(localStorage.getItem('yearsAgo') || '0', 10);
-  });
+  const [yearsAgo, setYearsAgo] = useState(0);
   const [dateRange, setDateRange] = useState('');
 
   useEffect(() => {
@@ -27,9 +25,7 @@ const YearlyBarChart = ({ onSwitchChart }) => {
       ];
 
       const sortedLabels = months;
-      const sortedData = months.map((month, index) =>
-        data[String(index + 1).padStart(2, '0')] ? data[String(index + 1).padStart(2, '0')] / 60 : 0
-      ); 
+      const sortedData = months.map((month, index) => data[String(index + 1).padStart(2, '0')] ? data[String(index + 1).padStart(2, '0')] / 60 : 0); 
       setYearlyData({ labels: sortedLabels, data: sortedData });
       setDateRange(calculateDateRange(yearsAgo));
     } catch (error) {
@@ -68,28 +64,7 @@ const YearlyBarChart = ({ onSwitchChart }) => {
         options: {
           scales: {
             y: {
-              beginAtZero: true,
-              ticks: {
-                color: 'white' 
-              },
-              grid: {
-                color: 'white' 
-              }
-            },
-            x: {
-              ticks: {
-                color: 'white' 
-              },
-              grid: {
-                color: 'white' 
-              }
-            }
-          },
-          plugins: {
-            legend: {
-              labels: {
-                color: 'white' 
-              }
+              beginAtZero: true
             }
           }
         }
@@ -98,22 +73,72 @@ const YearlyBarChart = ({ onSwitchChart }) => {
   }, [yearlyData]);
 
   const handlePreviousYear = () => {
-    const newYearsAgo = yearsAgo + 1;
-    setYearsAgo(newYearsAgo);
-    localStorage.setItem('yearsAgo', newYearsAgo);
+    setYearsAgo(yearsAgo + 1);
   };
 
   const handleNextYear = () => {
-    const newYearsAgo = yearsAgo - 1;
-    setYearsAgo(newYearsAgo);
-    localStorage.setItem('yearsAgo', newYearsAgo);
+    setYearsAgo(yearsAgo - 1);
   };
 
   const canGoNextYear = () => {
     const now = new Date();
     const currentYear = now.getFullYear();
+
     return dateRange < currentYear;
   };
+
+ useEffect(() => {
+    if (chartRef.current && yearlyData.labels.length > 0) {
+      const ctx = chartRef.current.getContext('2d');
+
+      if (chartInstanceRef.current) {
+        chartInstanceRef.current.destroy();
+      }
+
+      chartInstanceRef.current = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: yearlyData.labels,
+          datasets: [{
+            label: 'Time Spent (minutes)',
+            data: yearlyData.data,
+            backgroundColor: 'rgba(255, 159, 64, 0.6)',
+            borderColor: 'rgba(255, 159, 64, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                color: 'white' // Y-axis text color
+              },
+              grid: {
+                color: 'white' // Y-axis grid color
+              }
+            },
+            x: {
+              ticks: {
+                color: 'white' // X-axis text color
+              },
+              grid: {
+                color: 'white' // X-axis grid color
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              labels: {
+                color: 'white' // Legend text color
+              }
+            }
+          }
+        }
+      });
+    }
+  }, [yearlyData]);
+
 
   return (
     <div className="chart-container">
@@ -132,4 +157,4 @@ const YearlyBarChart = ({ onSwitchChart }) => {
   );
 };
 
-export default YearlyBarChart;
+export default YearlyBarChart;//

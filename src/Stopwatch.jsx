@@ -3,15 +3,8 @@ import axiosInstance from './axiosConfig';
 import './stopwatch.css';
 
 const Stopwatch = ({ activeGoal, onTimeAdded }) => {
-  const [time, setTime] = useState(() => {
-    const savedTime = localStorage.getItem('stopwatchTime');
-    return savedTime ? parseInt(savedTime, 10) : 0;
-  });
-
-  const [isActive, setIsActive] = useState(() => {
-    const savedState = localStorage.getItem('stopwatchState');
-    return savedState === 'true';
-  });
+  const [time, setTime] = useState(0);
+  const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
     let interval = null;
@@ -24,11 +17,6 @@ const Stopwatch = ({ activeGoal, onTimeAdded }) => {
     }
     return () => clearInterval(interval);
   }, [isActive, time]);
-
-  useEffect(() => {
-    localStorage.setItem('stopwatchTime', time);
-    localStorage.setItem('stopwatchState', isActive);
-  }, [time, isActive]);
 
   const handleStartStop = () => {
     setIsActive(!isActive);
@@ -46,8 +34,6 @@ const Stopwatch = ({ activeGoal, onTimeAdded }) => {
       });
       alert('Time saved successfully!');
       onTimeAdded(response.data);
-      localStorage.removeItem('stopwatchTime');
-      localStorage.removeItem('stopwatchState');
     } catch (error) {
       console.error('Error saving time:', error);
     }
