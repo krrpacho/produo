@@ -69,25 +69,25 @@ const ChartComponent = ({ onSwitchChart }) => {
             y: {
               beginAtZero: true,
               ticks: {
-                color: 'white' // Y-axis text color
+                color: 'white' 
               },
               grid: {
-                color: 'white' // Y-axis grid color
+                color: 'white' 
               }
             },
             x: {
               ticks: {
-                color: 'white' // X-axis text color
+                color: 'white' 
               },
               grid: {
-                color: 'white' // X-axis grid color
+                color: 'white'
               }
             }
           },
           plugins: {
             legend: {
               labels: {
-                color: 'white' // Legend text color
+                color: 'white' 
               }
             }
           }
