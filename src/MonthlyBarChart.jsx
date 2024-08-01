@@ -10,6 +10,17 @@ const MonthlyBarChart = ({ onSwitchChart }) => {
   const [monthsAgo, setMonthsAgo] = useState(0);
   const [dateRange, setDateRange] = useState('');
 
+  // Load monthly data from local storage when the component mounts
+  useEffect(() => {
+    const savedMonthlyData = JSON.parse(localStorage.getItem('monthlyData')) || { labels: [], data: [] };
+    setMonthlyData(savedMonthlyData);
+  }, []);
+
+  // Save monthly data to local storage whenever `monthlyData` changes
+  useEffect(() => {
+    localStorage.setItem('monthlyData', JSON.stringify(monthlyData));
+  }, [monthlyData]);
+
   useEffect(() => {
     fetchMonthlyData(monthsAgo);
   }, [monthsAgo]);
@@ -24,7 +35,9 @@ const MonthlyBarChart = ({ onSwitchChart }) => {
       const sortedLabels = order;
       const sortedData = order.map(period => data[period] ? data[period] / 60 : 0); 
 
-      setMonthlyData({ labels: sortedLabels, data: sortedData });
+      const newMonthlyData = { labels: sortedLabels, data: sortedData };
+      setMonthlyData(newMonthlyData);
+      localStorage.setItem('monthlyData', JSON.stringify(newMonthlyData));
       setDateRange(calculateDateRange(monthsAgo));
     } catch (error) {
       console.error('Error fetching monthly summary:', error);

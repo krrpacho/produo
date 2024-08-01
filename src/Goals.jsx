@@ -1,16 +1,30 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import axiosInstance from './axiosConfig';
 import './Goals.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
 
-const Goals = ({ goals, onSelectGoal, onDeleteGoal, onAddGoalClick, onEditGoalClick }) => {
+const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
+  const [goals, setGoals] = useState([]);
+
+  // Load goals from local storage on component mount
+  useEffect(() => {
+    const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
+    setGoals(storedGoals);
+  }, []);
+
+  // Save goals to local storage whenever the goals state changes
+  useEffect(() => {
+    localStorage.setItem('goals', JSON.stringify(goals));
+  }, [goals]);
+
   const handleDelete = async (goalId) => {
     try {
       const response = await axiosInstance.delete(`/api/goals/${goalId}`);
       if (response.status === 204) {
         alert('Goal deleted successfully!');
-        onDeleteGoal(goalId);
+        // Update local state and local storage
+        setGoals(prevGoals => prevGoals.filter(goal => goal.id !== goalId));
       } else {
         alert('Failed to delete goal.');
       }
@@ -18,6 +32,19 @@ const Goals = ({ goals, onSelectGoal, onDeleteGoal, onAddGoalClick, onEditGoalCl
       console.error('Error deleting goal:', error);
       alert('Failed to delete goal.');
     }
+  };
+
+  const handleAddGoal = (newGoal) => {
+    // Assuming newGoal contains the goal data
+    setGoals(prevGoals => [...prevGoals, newGoal]);
+    onAddGoalClick(); // Call the prop function if needed
+  };
+
+  const handleEditGoal = (updatedGoal) => {
+    setGoals(prevGoals =>
+      prevGoals.map(goal => (goal.id === updatedGoal.id ? updatedGoal : goal))
+    );
+    onEditGoalClick(updatedGoal); // Call the prop function if needed
   };
 
   return (
@@ -36,7 +63,7 @@ const Goals = ({ goals, onSelectGoal, onDeleteGoal, onAddGoalClick, onEditGoalCl
               <div className="icons">
                 <FontAwesomeIcon
                   icon={faEdit}
-                  onClick={(e) => { e.stopPropagation(); onEditGoalClick(goal); }}
+                  onClick={(e) => { e.stopPropagation(); handleEditGoal(goal); }}
                   className="edit-icon"
                 />
                 <FontAwesomeIcon

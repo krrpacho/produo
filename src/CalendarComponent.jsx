@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import axiosInstance from './axiosConfig';
@@ -7,6 +7,18 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import './CalendarComponent.css';
 
 const CalendarComponent = ({ times, onTimeDeleted }) => {
+  const [events, setEvents] = useState([]);
+
+  // Load events from local storage when the component mounts
+  useEffect(() => {
+    const savedEvents = JSON.parse(localStorage.getItem('events')) || [];
+    setEvents(savedEvents);
+  }, []);
+
+  // Save events to local storage whenever `times` changes
+  useEffect(() => {
+    localStorage.setItem('events', JSON.stringify(events));
+  }, [events]);
 
   const handleDelete = async (id) => {
     try {
@@ -15,6 +27,10 @@ const CalendarComponent = ({ times, onTimeDeleted }) => {
       if (response.status === 204) {
         alert('Time deleted successfully!');
         onTimeDeleted(id);
+        // Remove event from local storage after deletion
+        const updatedEvents = events.filter(event => event.id !== id);
+        setEvents(updatedEvents);
+        localStorage.setItem('events', JSON.stringify(updatedEvents));
       } else {
         alert('Failed to delete time.');
       }
@@ -40,12 +56,17 @@ const CalendarComponent = ({ times, onTimeDeleted }) => {
     );
   };
 
-  const events = times.map(time => ({
-    id: time.id,
-    title: time.elapsedTime,
-    start: time.date,
-    color: time.color
-  }));
+  // Transform times to match the format FullCalendar expects
+  useEffect(() => {
+    const transformedEvents = times.map(time => ({
+      id: time.id,
+      title: time.elapsedTime,
+      start: time.date,
+      color: time.color
+    }));
+    setEvents(transformedEvents);
+    localStorage.setItem('events', JSON.stringify(transformedEvents));
+  }, [times]);
 
   return (
     <div className="calendar-container">
@@ -60,4 +81,3 @@ const CalendarComponent = ({ times, onTimeDeleted }) => {
 };
 
 export default CalendarComponent;
-

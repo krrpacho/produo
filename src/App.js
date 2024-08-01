@@ -27,11 +27,35 @@ const App = () => {
   const calendarSectionRef = useRef(null);
   const chartSectionRef = useRef(null);
 
+  // Load state from local storage on component mount
   useEffect(() => {
-    fetchGoals();
-    fetchTimes();
-    fetchWeeklySummary();
+    const savedGoals = JSON.parse(localStorage.getItem('goals')) || [];
+    const savedTimes = JSON.parse(localStorage.getItem('times')) || [];
+    const savedWeeklyData = JSON.parse(localStorage.getItem('weeklyData')) || { labels: [], data: [] };
+    const savedCurrentChart = localStorage.getItem('currentChart') || 'weekly';
+
+    setGoals(savedGoals);
+    setTimes(savedTimes);
+    setWeeklyData(savedWeeklyData);
+    setCurrentChart(savedCurrentChart);
   }, []);
+
+  // Save state to local storage whenever state changes
+  useEffect(() => {
+    localStorage.setItem('goals', JSON.stringify(goals));
+  }, [goals]);
+
+  useEffect(() => {
+    localStorage.setItem('times', JSON.stringify(times));
+  }, [times]);
+
+  useEffect(() => {
+    localStorage.setItem('weeklyData', JSON.stringify(weeklyData));
+  }, [weeklyData]);
+
+  useEffect(() => {
+    localStorage.setItem('currentChart', currentChart);
+  }, [currentChart]);
 
   const fetchGoals = async () => {
     try {

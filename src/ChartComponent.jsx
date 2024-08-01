@@ -12,6 +12,17 @@ const ChartComponent = ({ onSwitchChart }) => {
   const [weeksAgo, setWeeksAgo] = useState(0);
   const [dateRange, setDateRange] = useState('');
 
+  // Load weekly data from local storage when the component mounts
+  useEffect(() => {
+    const savedWeeklyData = JSON.parse(localStorage.getItem('weeklyData')) || { labels: [], data: [] };
+    setWeeklyData(savedWeeklyData);
+  }, []);
+
+  // Save weekly data to local storage whenever `weeklyData` changes
+  useEffect(() => {
+    localStorage.setItem('weeklyData', JSON.stringify(weeklyData));
+  }, [weeklyData]);
+
   useEffect(() => {
     fetchWeeklyData(weeksAgo);
   }, [weeksAgo]);
@@ -22,7 +33,9 @@ const ChartComponent = ({ onSwitchChart }) => {
       const data = response.data;
       const labels = daysOfWeek;
       const values = labels.map(day => data[day] / 60); 
-      setWeeklyData({ labels, data: values });
+      const newWeeklyData = { labels, data: values };
+      setWeeklyData(newWeeklyData);
+      localStorage.setItem('weeklyData', JSON.stringify(newWeeklyData));
       setDateRange(calculateDateRange(weeksAgo));
     } catch (error) {
       console.error('Error fetching weekly summary:', error);

@@ -10,6 +10,17 @@ const YearlyBarChart = ({ onSwitchChart }) => {
   const [yearsAgo, setYearsAgo] = useState(0);
   const [dateRange, setDateRange] = useState('');
 
+  // Load yearly data from local storage when the component mounts
+  useEffect(() => {
+    const savedYearlyData = JSON.parse(localStorage.getItem('yearlyData')) || { labels: [], data: [] };
+    setYearlyData(savedYearlyData);
+  }, []);
+
+  // Save yearly data to local storage whenever `yearlyData` changes
+  useEffect(() => {
+    localStorage.setItem('yearlyData', JSON.stringify(yearlyData));
+  }, [yearlyData]);
+
   useEffect(() => {
     fetchYearlyData(yearsAgo);
   }, [yearsAgo]);
@@ -26,7 +37,10 @@ const YearlyBarChart = ({ onSwitchChart }) => {
 
       const sortedLabels = months;
       const sortedData = months.map((month, index) => data[String(index + 1).padStart(2, '0')] ? data[String(index + 1).padStart(2, '0')] / 60 : 0); 
-      setYearlyData({ labels: sortedLabels, data: sortedData });
+
+      const newYearlyData = { labels: sortedLabels, data: sortedData };
+      setYearlyData(newYearlyData);
+      localStorage.setItem('yearlyData', JSON.stringify(newYearlyData));
       setDateRange(calculateDateRange(yearsAgo));
     } catch (error) {
       console.error('Error fetching yearly summary:', error);
@@ -42,52 +56,6 @@ const YearlyBarChart = ({ onSwitchChart }) => {
   };
 
   useEffect(() => {
-    if (chartRef.current && yearlyData.labels.length > 0) {
-      const ctx = chartRef.current.getContext('2d');
-
-      if (chartInstanceRef.current) {
-        chartInstanceRef.current.destroy();
-      }
-
-      chartInstanceRef.current = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: yearlyData.labels,
-          datasets: [{
-            label: 'Time Spent (minutes)',
-            data: yearlyData.data,
-            backgroundColor: 'rgba(255, 159, 64, 0.6)',
-            borderColor: 'rgba(255, 159, 64, 1)',
-            borderWidth: 1
-          }]
-        },
-        options: {
-          scales: {
-            y: {
-              beginAtZero: true
-            }
-          }
-        }
-      });
-    }
-  }, [yearlyData]);
-
-  const handlePreviousYear = () => {
-    setYearsAgo(yearsAgo + 1);
-  };
-
-  const handleNextYear = () => {
-    setYearsAgo(yearsAgo - 1);
-  };
-
-  const canGoNextYear = () => {
-    const now = new Date();
-    const currentYear = now.getFullYear();
-
-    return dateRange < currentYear;
-  };
-
- useEffect(() => {
     if (chartRef.current && yearlyData.labels.length > 0) {
       const ctx = chartRef.current.getContext('2d');
 
@@ -139,6 +107,20 @@ const YearlyBarChart = ({ onSwitchChart }) => {
     }
   }, [yearlyData]);
 
+  const handlePreviousYear = () => {
+    setYearsAgo(yearsAgo + 1);
+  };
+
+  const handleNextYear = () => {
+    setYearsAgo(yearsAgo - 1);
+  };
+
+  const canGoNextYear = () => {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+
+    return dateRange < currentYear;
+  };
 
   return (
     <div className="chart-container">
