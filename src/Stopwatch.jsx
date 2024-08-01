@@ -5,27 +5,29 @@ import './stopwatch.css';
 const Stopwatch = ({ activeGoal, onTimeAdded }) => {
   const [time, setTime] = useState(0);
   const [isActive, setIsActive] = useState(false);
+  const [storedGoal, setStoredGoal] = useState(null);
 
-  // Load stopwatch and activeGoal state from local storage on component mount
+  // Load stopwatch and active goal from local storage on component mount
   useEffect(() => {
     const savedState = JSON.parse(localStorage.getItem('stopwatch')) || { time: 0, isActive: false };
     setTime(savedState.time);
     setIsActive(savedState.isActive);
-    
+
     const savedGoal = JSON.parse(localStorage.getItem('activeGoal'));
-    if (savedGoal) {
-      // You might need to handle setting the goal in parent component or global state
-      // setActiveGoal(savedGoal);
-    }
+    setStoredGoal(savedGoal);
   }, []);
 
-  // Save stopwatch state and activeGoal to local storage whenever they change
+  // Save stopwatch state to local storage whenever it changes
   useEffect(() => {
     localStorage.setItem('stopwatch', JSON.stringify({ time, isActive }));
+  }, [time, isActive]);
+
+  // Save the active goal to local storage whenever it changes
+  useEffect(() => {
     if (activeGoal) {
       localStorage.setItem('activeGoal', JSON.stringify(activeGoal));
     }
-  }, [time, isActive, activeGoal]);
+  }, [activeGoal]);
 
   useEffect(() => {
     let interval = null;
@@ -71,8 +73,10 @@ const Stopwatch = ({ activeGoal, onTimeAdded }) => {
   return (
     <div className="rectangle">
       <div className="stopwatch-container">
-        <h1 className="stopwatch-title">Currently working on: {activeGoal ? activeGoal.name : 'No goal selected'}</h1>
-        {activeGoal && <h2 className="stopwatch-subtitle">Time you wanted to spend: {activeGoal.targetTime}</h2>}
+        <h1 className="stopwatch-title">
+          Currently working on: {storedGoal ? storedGoal.name : 'No goal selected'}
+        </h1>
+        {storedGoal && <h2 className="stopwatch-subtitle">Time you wanted to spend: {storedGoal.targetTime}</h2>}
         <p className="stopwatch-time">
           {hours.toString().padStart(2, "0")}:
           {minutes.toString().padStart(2, "0")}:
