@@ -3,7 +3,7 @@ import Chart from 'chart.js/auto';
 import axiosInstance from './axiosConfig';
 import './ChartComponent.css';
 
-const MonthlyBarChart = ({ onSwitchChart, userId }) => {
+const MonthlyBarChart = ({ onSwitchChart }) => {
   const chartRef = useRef(null);
   const chartInstanceRef = useRef(null);
   const [monthlyData, setMonthlyData] = useState({ labels: [], data: [] });
@@ -11,15 +11,8 @@ const MonthlyBarChart = ({ onSwitchChart, userId }) => {
   const [dateRange, setDateRange] = useState('');
 
   useEffect(() => {
-    const storedData = localStorage.getItem(`monthlyData_${userId}_${monthsAgo}`);
-    if (storedData) {
-      // Use stored data if available
-      setMonthlyData(JSON.parse(storedData));
-      setDateRange(calculateDateRange(monthsAgo));
-    } else {
-      fetchMonthlyData(monthsAgo);
-    }
-  }, [monthsAgo, userId]);
+    fetchMonthlyData(monthsAgo);
+  }, [monthsAgo]);
 
   const fetchMonthlyData = async (monthsAgo) => {
     try {
@@ -29,14 +22,10 @@ const MonthlyBarChart = ({ onSwitchChart, userId }) => {
       const order = ['1-8', '9-16', '17-23', '24-31'];
 
       const sortedLabels = order;
-      const sortedData = order.map(period => data[period] ? data[period] / 60 : 0);
+      const sortedData = order.map(period => data[period] ? data[period] / 60 : 0); 
 
-      const monthlyData = { labels: sortedLabels, data: sortedData };
-      setMonthlyData(monthlyData);
+      setMonthlyData({ labels: sortedLabels, data: sortedData });
       setDateRange(calculateDateRange(monthsAgo));
-
-      // Save to local storage
-      localStorage.setItem(`monthlyData_${userId}_${monthsAgo}`, JSON.stringify(monthlyData));
     } catch (error) {
       console.error('Error fetching monthly summary:', error);
     }
@@ -123,7 +112,7 @@ const MonthlyBarChart = ({ onSwitchChart, userId }) => {
     const currentYear = now.getFullYear();
 
     const [dateRangeMonth, dateRangeYear] = dateRange.split(' ');
-    const rangeMonthIndex = new Date(Date.parse(dateRangeMonth + " 1, 2022")).getMonth(); // Convert month name to index
+    const rangeMonthIndex = new Date(Date.parse(dateRangeMonth +" 1, 2022")).getMonth(); // Convert month name to index
     const rangeYear = parseInt(dateRangeYear, 10);
 
     return (rangeYear < currentYear) || (rangeYear === currentYear && rangeMonthIndex < currentMonth);

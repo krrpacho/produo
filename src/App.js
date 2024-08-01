@@ -22,42 +22,21 @@ const App = () => {
   const [currentChart, setCurrentChart] = useState('weekly');
   const [isNavbarOpen, setIsNavbarOpen] = useState(true);
 
-  const userId = 'defaultUser'; // Replace with actual user ID logic
   const goalSectionRef = useRef(null);
   const stopwatchSectionRef = useRef(null);
   const calendarSectionRef = useRef(null);
   const chartSectionRef = useRef(null);
 
   useEffect(() => {
-    const storedGoals = localStorage.getItem(`goals_${userId}`);
-    const storedTimes = localStorage.getItem(`times_${userId}`);
-    const storedWeeklyData = localStorage.getItem(`weeklyData_${userId}`);
-
-    if (storedGoals) {
-      setGoals(JSON.parse(storedGoals));
-    } else {
-      fetchGoals();
-    }
-
-    if (storedTimes) {
-      setTimes(JSON.parse(storedTimes));
-    } else {
-      fetchTimes();
-    }
-
-    if (storedWeeklyData) {
-      setWeeklyData(JSON.parse(storedWeeklyData));
-    } else {
-      fetchWeeklySummary();
-    }
-  }, [userId]);
+    fetchGoals();
+    fetchTimes();
+    fetchWeeklySummary();
+  }, []);
 
   const fetchGoals = async () => {
     try {
       const response = await axiosInstance.get('/api/goals');
-      const goalsData = response.data;
-      setGoals(goalsData);
-      localStorage.setItem(`goals_${userId}`, JSON.stringify(goalsData));
+      setGoals(response.data);
     } catch (error) {
       console.error('Error fetching goals:', error);
     }
@@ -66,9 +45,7 @@ const App = () => {
   const fetchTimes = async () => {
     try {
       const response = await axiosInstance.get('/api/times');
-      const timesData = response.data;
-      setTimes(timesData);
-      localStorage.setItem(`times_${userId}`, JSON.stringify(timesData));
+      setTimes(response.data);
     } catch (error) {
       console.error('Error fetching times:', error);
     }
@@ -80,9 +57,7 @@ const App = () => {
       const summary = response.data;
       const labels = Object.keys(summary);
       const data = Object.values(summary).map(seconds => seconds / 60); 
-      const weeklyData = { labels, data };
-      setWeeklyData(weeklyData);
-      localStorage.setItem(`weeklyData_${userId}`, JSON.stringify(weeklyData));
+      setWeeklyData({ labels, data });
     } catch (error) {
       console.error('Error fetching weekly summary:', error);
     }
@@ -90,12 +65,12 @@ const App = () => {
 
   const handleGoalSaved = () => {
     setShowNewGoal(false);
-    fetchGoals(); // Fetch and update goals to local storage
+    fetchGoals();
   };
 
   const handleTimeAdded = (newTime) => {
-    fetchTimes(); // Fetch and update times to local storage
-    fetchWeeklySummary(); // Fetch and update weekly summary to local storage
+    fetchTimes();
+    fetchWeeklySummary();
   };
 
   const switchChart = (chartType) => {
@@ -154,8 +129,8 @@ const App = () => {
         </div>
         <div ref={chartSectionRef} className="chart-section">
           {currentChart === 'weekly' && <ChartComponent weeklyData={weeklyData} onSwitchChart={() => switchChart('monthly')} />}
-          {currentChart === 'monthly' && <MonthlyBarChart onSwitchChart={() => switchChart('yearly')} userId={userId} />}
-          {currentChart === 'yearly' && <YearlyBarChart onSwitchChart={() => switchChart('weekly')} userId={userId} />}
+          {currentChart === 'monthly' && <MonthlyBarChart onSwitchChart={() => switchChart('yearly')} />}
+          {currentChart === 'yearly' && <YearlyBarChart onSwitchChart={() => switchChart('weekly')} />}
         </div>
         <Footer />  
       </div>

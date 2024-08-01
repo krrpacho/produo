@@ -1,39 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import axiosInstance from './axiosConfig';
 import './Goals.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
 
-// Retrieve user ID from local storage
-const getUserId = () => localStorage.getItem('userId');
-
-const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
-  const [goals, setGoals] = useState([]);
-  
-  // Function to fetch goals from the backend
-  const fetchGoals = async () => {
-    const userId = getUserId();
-    try {
-      const response = await axiosInstance.get(`/api/goals?userId=${userId}`);
-      setGoals(response.data);
-    } catch (error) {
-      console.error('Error fetching goals:', error);
-    }
-  };
-
-  // Fetch goals when the component mounts
-  useEffect(() => {
-    fetchGoals();
-  }, []);
-
+const Goals = ({ goals, onSelectGoal, onDeleteGoal, onAddGoalClick, onEditGoalClick }) => {
   const handleDelete = async (goalId) => {
-    const userId = getUserId();
     try {
-      const response = await axiosInstance.delete(`/api/goals/${goalId}?userId=${userId}`);
+      const response = await axiosInstance.delete(`/api/goals/${goalId}`);
       if (response.status === 204) {
         alert('Goal deleted successfully!');
-        // Remove from local state
-        setGoals(goals.filter(goal => goal.id !== goalId));
+        onDeleteGoal(goalId);
       } else {
         alert('Failed to delete goal.');
       }

@@ -2,40 +2,24 @@ import React, { useState, useEffect } from 'react';
 import axiosInstance from './axiosConfig';
 import './stopwatch.css';
 
-// Function to save stopwatch state to local storage with userId
-const saveStopwatchStateToLocalStorage = (userId, state) => {
-  localStorage.setItem(`stopwatchState_${userId}`, JSON.stringify(state));
-};
-
-// Function to load stopwatch state from local storage with userId
-const loadStopwatchStateFromLocalStorage = (userId) => {
-  const savedState = localStorage.getItem(`stopwatchState_${userId}`);
-  return savedState ? JSON.parse(savedState) : { time: 0, isActive: false };
-};
-
-const Stopwatch = ({ activeGoal, onTimeAdded, userId }) => {
-  const [time, setTime] = useState(loadStopwatchStateFromLocalStorage(userId).time);
-  const [isActive, setIsActive] = useState(loadStopwatchStateFromLocalStorage(userId).isActive);
+const Stopwatch = ({ activeGoal, onTimeAdded }) => {
+  const [time, setTime] = useState(0);
+  const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
     let interval = null;
     if (isActive) {
       interval = setInterval(() => {
-        setTime((prevTime) => {
-          const newTime = prevTime + 1;
-          saveStopwatchStateToLocalStorage(userId, { time: newTime, isActive });
-          return newTime;
-        });
+        setTime((time) => time + 1);
       }, 1000);
     } else if (!isActive && time !== 0) {
       clearInterval(interval);
     }
     return () => clearInterval(interval);
-  }, [isActive, time, userId]);
+  }, [isActive, time]);
 
   const handleStartStop = () => {
     setIsActive(!isActive);
-    saveStopwatchStateToLocalStorage(userId, { time, isActive: !isActive });
   };
 
   const handleEnd = async () => {
@@ -54,7 +38,6 @@ const Stopwatch = ({ activeGoal, onTimeAdded, userId }) => {
       console.error('Error saving time:', error);
     }
     setTime(0);
-    saveStopwatchStateToLocalStorage(userId, { time: 0, isActive: false });
   };
 
   const hours = Math.floor(time / 3600);

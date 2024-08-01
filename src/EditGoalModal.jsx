@@ -2,9 +2,6 @@ import React, { useState } from 'react';
 import axiosInstance from './axiosConfig';
 import './EditGoalModal.css';
 
-// Retrieve user ID from local storage
-const getUserId = () => localStorage.getItem('userId');
-
 const EditGoalModal = ({ goal, onGoalUpdated, onClose }) => {
   const [name, setName] = useState(goal.name);
   const [targetTime, setTargetTime] = useState(goal.targetTime);
@@ -12,23 +9,19 @@ const EditGoalModal = ({ goal, onGoalUpdated, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const userId = getUserId(); // Get user ID from local storage
-
     try {
-      const updatedGoal = { ...goal, name, targetTime, color, userId }; // Include user ID
+      const updatedGoal = { ...goal, name, targetTime, color };
       const response = await axiosInstance.put(`/api/goals/${goal.id}`, updatedGoal);
       if (response.status === 200) {
         alert('Goal updated successfully!');
-        onGoalUpdated();
-        onClose();
+        onGoalUpdated();  
+        onClose();       
       } else {
         alert('Failed to update goal.');
       }
     } catch (error) {
       console.error('Error updating goal:', error);
       alert('Failed to update goal.');
-      // Optionally handle local storage persistence in case of failure
-      // localStorage.setItem('unsavedGoal', JSON.stringify(updatedGoal));
     }
   };
 

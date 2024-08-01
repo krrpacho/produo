@@ -5,7 +5,7 @@ import './ChartComponent.css';
 
 const daysOfWeek = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
 
-const ChartComponent = ({ onSwitchChart, userId }) => {
+const ChartComponent = ({ onSwitchChart }) => {
   const chartRef = useRef(null);
   const chartInstanceRef = useRef(null);
   const [weeklyData, setWeeklyData] = useState({ labels: [], data: [] });
@@ -13,15 +13,8 @@ const ChartComponent = ({ onSwitchChart, userId }) => {
   const [dateRange, setDateRange] = useState('');
 
   useEffect(() => {
-    const storedData = localStorage.getItem(`weeklyData_${userId}_${weeksAgo}`);
-    if (storedData) {
-      // Use stored data if available
-      setWeeklyData(JSON.parse(storedData));
-      setDateRange(calculateDateRange(weeksAgo));
-    } else {
-      fetchWeeklyData(weeksAgo);
-    }
-  }, [weeksAgo, userId]);
+    fetchWeeklyData(weeksAgo);
+  }, [weeksAgo]);
 
   const fetchWeeklyData = async (weeksAgo) => {
     try {
@@ -29,12 +22,8 @@ const ChartComponent = ({ onSwitchChart, userId }) => {
       const data = response.data;
       const labels = daysOfWeek;
       const values = labels.map(day => data[day] / 60); 
-      const weeklyData = { labels, data: values };
-      setWeeklyData(weeklyData);
+      setWeeklyData({ labels, data: values });
       setDateRange(calculateDateRange(weeksAgo));
-
-      // Save to local storage
-      localStorage.setItem(`weeklyData_${userId}_${weeksAgo}`, JSON.stringify(weeklyData));
     } catch (error) {
       console.error('Error fetching weekly summary:', error);
     }

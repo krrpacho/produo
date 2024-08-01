@@ -2,22 +2,17 @@ import React, { useState } from 'react';
 import axiosInstance from './axiosConfig';
 import './NewGoals.css';
 
-// Retrieve user ID from local storage
-const getUserId = () => localStorage.getItem('userId');
-
 const NewGoals = ({ onGoalSaved, onClose }) => {
   const [goalName, setGoalName] = useState('');
   const [targetTime, setTargetTime] = useState('');
   const [color, setColor] = useState('#000000');
 
   const handleSaveGoal = async () => {
-    const userId = getUserId();
     try {
       const newGoal = {
         name: goalName,
         targetTime,
-        color,
-        userId // Include userId in the goal data
+        color
       };
       await axiosInstance.post('/api/goals', newGoal);
       onGoalSaved();
@@ -26,9 +21,6 @@ const NewGoals = ({ onGoalSaved, onClose }) => {
       setColor('#000000');
     } catch (error) {
       console.error('Error saving goal:', error);
-      // Optionally handle local storage persistence in case of failure
-      // For example, you could save the new goal to local storage if the backend fails
-      // localStorage.setItem('unsavedGoal', JSON.stringify(newGoal));
     }
   };
 
@@ -76,4 +68,3 @@ const NewGoals = ({ onGoalSaved, onClose }) => {
 };
 
 export default NewGoals;
-

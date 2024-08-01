@@ -3,7 +3,7 @@ import Chart from 'chart.js/auto';
 import axiosInstance from './axiosConfig';
 import './ChartComponent.css';
 
-const YearlyBarChart = ({ onSwitchChart, userId }) => {
+const YearlyBarChart = ({ onSwitchChart }) => {
   const chartRef = useRef(null);
   const chartInstanceRef = useRef(null);
   const [yearlyData, setYearlyData] = useState({ labels: [], data: [] });
@@ -11,15 +11,8 @@ const YearlyBarChart = ({ onSwitchChart, userId }) => {
   const [dateRange, setDateRange] = useState('');
 
   useEffect(() => {
-    const storedData = localStorage.getItem(`yearlyData_${userId}_${yearsAgo}`);
-    if (storedData) {
-      // Use stored data if available
-      setYearlyData(JSON.parse(storedData));
-      setDateRange(calculateDateRange(yearsAgo));
-    } else {
-      fetchYearlyData(yearsAgo);
-    }
-  }, [yearsAgo, userId]);
+    fetchYearlyData(yearsAgo);
+  }, [yearsAgo]);
 
   const fetchYearlyData = async (yearsAgo) => {
     try {
@@ -32,14 +25,9 @@ const YearlyBarChart = ({ onSwitchChart, userId }) => {
       ];
 
       const sortedLabels = months;
-      const sortedData = months.map((month, index) => data[String(index + 1).padStart(2, '0')] ? data[String(index + 1).padStart(2, '0')] / 60 : 0);
-      const yearlyData = { labels: sortedLabels, data: sortedData };
-
-      setYearlyData(yearlyData);
+      const sortedData = months.map((month, index) => data[String(index + 1).padStart(2, '0')] ? data[String(index + 1).padStart(2, '0')] / 60 : 0); 
+      setYearlyData({ labels: sortedLabels, data: sortedData });
       setDateRange(calculateDateRange(yearsAgo));
-
-      // Save to local storage
-      localStorage.setItem(`yearlyData_${userId}_${yearsAgo}`, JSON.stringify(yearlyData));
     } catch (error) {
       console.error('Error fetching yearly summary:', error);
     }
@@ -54,6 +42,52 @@ const YearlyBarChart = ({ onSwitchChart, userId }) => {
   };
 
   useEffect(() => {
+    if (chartRef.current && yearlyData.labels.length > 0) {
+      const ctx = chartRef.current.getContext('2d');
+
+      if (chartInstanceRef.current) {
+        chartInstanceRef.current.destroy();
+      }
+
+      chartInstanceRef.current = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: yearlyData.labels,
+          datasets: [{
+            label: 'Time Spent (minutes)',
+            data: yearlyData.data,
+            backgroundColor: 'rgba(255, 159, 64, 0.6)',
+            borderColor: 'rgba(255, 159, 64, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+  }, [yearlyData]);
+
+  const handlePreviousYear = () => {
+    setYearsAgo(yearsAgo + 1);
+  };
+
+  const handleNextYear = () => {
+    setYearsAgo(yearsAgo - 1);
+  };
+
+  const canGoNextYear = () => {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+
+    return dateRange < currentYear;
+  };
+
+ useEffect(() => {
     if (chartRef.current && yearlyData.labels.length > 0) {
       const ctx = chartRef.current.getContext('2d');
 
@@ -105,19 +139,6 @@ const YearlyBarChart = ({ onSwitchChart, userId }) => {
     }
   }, [yearlyData]);
 
-  const handlePreviousYear = () => {
-    setYearsAgo(yearsAgo + 1);
-  };
-
-  const handleNextYear = () => {
-    setYearsAgo(yearsAgo - 1);
-  };
-
-  const canGoNextYear = () => {
-    const now = new Date();
-    const currentYear = now.getFullYear();
-    return dateRange < currentYear;
-  };
 
   return (
     <div className="chart-container">
@@ -137,4 +158,3 @@ const YearlyBarChart = ({ onSwitchChart, userId }) => {
 };
 
 export default YearlyBarChart;
-
