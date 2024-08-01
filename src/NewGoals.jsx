@@ -14,11 +14,21 @@ const NewGoals = ({ onGoalSaved, onClose }) => {
         targetTime,
         color
       };
-      await axiosInstance.post('/api/goals', newGoal);
+      
+      // Save the new goal to the backend
+      const response = await axiosInstance.post('/api/goals', newGoal);
+      const savedGoal = response.data;
+
+      // Update local storage and state of goals
+      const savedGoals = JSON.parse(localStorage.getItem('goals')) || [];
+      savedGoals.push(savedGoal);
+      localStorage.setItem('goals', JSON.stringify(savedGoals));
+
       onGoalSaved();
       setGoalName('');
       setTargetTime('');
       setColor('#000000');
+
     } catch (error) {
       console.error('Error saving goal:', error);
     }
@@ -67,4 +77,4 @@ const NewGoals = ({ onGoalSaved, onClose }) => {
   );
 };
 
-export default NewGoals;//OLD
+export default NewGoals;
