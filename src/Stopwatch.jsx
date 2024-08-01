@@ -6,17 +6,26 @@ const Stopwatch = ({ activeGoal, onTimeAdded }) => {
   const [time, setTime] = useState(0);
   const [isActive, setIsActive] = useState(false);
 
-  // Load stopwatch state from local storage on component mount
+  // Load stopwatch and activeGoal state from local storage on component mount
   useEffect(() => {
     const savedState = JSON.parse(localStorage.getItem('stopwatch')) || { time: 0, isActive: false };
     setTime(savedState.time);
     setIsActive(savedState.isActive);
+    
+    const savedGoal = JSON.parse(localStorage.getItem('activeGoal'));
+    if (savedGoal) {
+      // You might need to handle setting the goal in parent component or global state
+      // setActiveGoal(savedGoal);
+    }
   }, []);
 
-  // Save stopwatch state to local storage whenever it changes
+  // Save stopwatch state and activeGoal to local storage whenever they change
   useEffect(() => {
     localStorage.setItem('stopwatch', JSON.stringify({ time, isActive }));
-  }, [time, isActive]);
+    if (activeGoal) {
+      localStorage.setItem('activeGoal', JSON.stringify(activeGoal));
+    }
+  }, [time, isActive, activeGoal]);
 
   useEffect(() => {
     let interval = null;
@@ -52,6 +61,7 @@ const Stopwatch = ({ activeGoal, onTimeAdded }) => {
     setTime(0);
     // Clear local storage after ending session
     localStorage.removeItem('stopwatch');
+    localStorage.removeItem('activeGoal');
   };
 
   const hours = Math.floor(time / 3600);

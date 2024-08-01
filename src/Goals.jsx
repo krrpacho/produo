@@ -7,10 +7,20 @@ import { faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
 const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
   const [goals, setGoals] = useState([]);
 
-  // Load goals from local storage on component mount
+  // Load goals from server and update local storage
   useEffect(() => {
-    const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
-    setGoals(storedGoals);
+    const fetchGoals = async () => {
+      try {
+        const response = await axiosInstance.get('/api/goals');
+        const fetchedGoals = response.data;
+        setGoals(fetchedGoals);
+        localStorage.setItem('goals', JSON.stringify(fetchedGoals));
+      } catch (error) {
+        console.error('Error fetching goals:', error);
+      }
+    };
+
+    fetchGoals();
   }, []);
 
   // Save goals to local storage whenever the goals state changes
