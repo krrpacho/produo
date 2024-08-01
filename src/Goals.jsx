@@ -7,10 +7,25 @@ import { faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
 const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
   const [goals, setGoals] = useState([]);
 
-  // Load goals from local storage on component mount
+  // Load goals from local storage or server on component mount
   useEffect(() => {
-    const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
-    setGoals(storedGoals);
+    const loadGoals = async () => {
+      const savedGoals = JSON.parse(localStorage.getItem('goals'));
+      if (savedGoals) {
+        setGoals(savedGoals);
+      } else {
+        try {
+          const response = await axiosInstance.get('/api/goals');
+          const fetchedGoals = response.data;
+          setGoals(fetchedGoals);
+          localStorage.setItem('goals', JSON.stringify(fetchedGoals));
+        } catch (error) {
+          console.error('Error fetching goals:', error);
+        }
+      }
+    };
+
+    loadGoals();
   }, []);
 
   // Save goals to local storage whenever the goals state changes
@@ -23,8 +38,7 @@ const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
       const response = await axiosInstance.delete(`/api/goals/${goalId}`);
       if (response.status === 204) {
         alert('Goal deleted successfully!');
-        // Update local state and local storage
-        setGoals(prevGoals => prevGoals.filter(goal => goal.id !== goalId));
+        setGoals((prevGoals) => prevGoals.filter(goal => goal.id !== goalId));
       } else {
         alert('Failed to delete goal.');
       }
@@ -35,16 +49,15 @@ const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
   };
 
   const handleAddGoal = (newGoal) => {
-    // Assuming newGoal contains the goal data
-    setGoals(prevGoals => [...prevGoals, newGoal]);
-    onAddGoalClick(); // Call the prop function if needed
+    setGoals((prevGoals) => [...prevGoals, newGoal]);
+    onAddGoalClick();
   };
 
   const handleEditGoal = (updatedGoal) => {
-    setGoals(prevGoals =>
-      prevGoals.map(goal => (goal.id === updatedGoal.id ? updatedGoal : goal))
+    setGoals((prevGoals) =>
+      prevGoals.map((goal) => (goal.id === updatedGoal.id ? updatedGoal : goal))
     );
-    onEditGoalClick(updatedGoal); // Call the prop function if needed
+    onEditGoalClick(updatedGoal);
   };
 
   return (
@@ -52,7 +65,7 @@ const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
       <div className="goals-container">
         <h1 style={{ color: '#ffffff' }}>Your goals:</h1>
         <ul>
-          {goals.map(goal => (
+          {goals.map((goal) => (
             <li 
               key={goal.id} 
               style={{ backgroundColor: goal.color }} 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axiosInstance from './axiosConfig';
 import './NewGoals.css';
 
@@ -6,14 +6,6 @@ const NewGoals = ({ onGoalSaved, onClose }) => {
   const [goalName, setGoalName] = useState('');
   const [targetTime, setTargetTime] = useState('');
   const [color, setColor] = useState('#000000');
-
-  // Load previously saved goal data from local storage (if any)
-  useEffect(() => {
-    const savedGoal = JSON.parse(localStorage.getItem('newGoal')) || {};
-    setGoalName(savedGoal.name || '');
-    setTargetTime(savedGoal.targetTime || '');
-    setColor(savedGoal.color || '#000000');
-  }, []);
 
   const handleSaveGoal = async () => {
     try {
@@ -23,21 +15,18 @@ const NewGoals = ({ onGoalSaved, onClose }) => {
         color
       };
       
-      // Save the new goal to local storage
-      localStorage.setItem('newGoal', JSON.stringify(newGoal));
-      
-      // Save the goal to the backend
       await axiosInstance.post('/api/goals', newGoal);
 
-      // Notify parent component and reset form
+      // Update local storage and state of goals
+      const savedGoals = JSON.parse(localStorage.getItem('goals')) || [];
+      savedGoals.push(newGoal);
+      localStorage.setItem('goals', JSON.stringify(savedGoals));
+
       onGoalSaved();
       setGoalName('');
       setTargetTime('');
       setColor('#000000');
 
-      // Clear local storage after saving
-      localStorage.removeItem('newGoal');
-      
     } catch (error) {
       console.error('Error saving goal:', error);
     }
