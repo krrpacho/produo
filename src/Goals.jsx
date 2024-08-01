@@ -50,6 +50,7 @@ const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
 
   const handleAddGoal = (newGoal) => {
     setGoals((prevGoals) => [...prevGoals, newGoal]);
+    localStorage.setItem('goals', JSON.stringify([...goals, newGoal]));
     onAddGoalClick();
   };
 
@@ -57,6 +58,7 @@ const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
     setGoals((prevGoals) =>
       prevGoals.map((goal) => (goal.id === updatedGoal.id ? updatedGoal : goal))
     );
+    localStorage.setItem('goals', JSON.stringify(goals.map((goal) => (goal.id === updatedGoal.id ? updatedGoal : goal))));
     onEditGoalClick(updatedGoal);
   };
 
