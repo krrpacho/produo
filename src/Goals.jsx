@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import axiosInstance from './axiosConfig';
 import './Goals.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -9,8 +9,8 @@ const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
 
   // Load goals from local storage on component mount
   useEffect(() => {
-    const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
-    setGoals(storedGoals);
+    const savedGoals = JSON.parse(localStorage.getItem('goals')) || [];
+    setGoals(savedGoals);
   }, []);
 
   // Save goals to local storage whenever the goals state changes
@@ -23,8 +23,9 @@ const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
       const response = await axiosInstance.delete(`/api/goals/${goalId}`);
       if (response.status === 204) {
         alert('Goal deleted successfully!');
-        // Update local state and local storage
+        // Remove goal from state and local storage
         setGoals(prevGoals => prevGoals.filter(goal => goal.id !== goalId));
+        localStorage.setItem('goals', JSON.stringify(goals));
       } else {
         alert('Failed to delete goal.');
       }
@@ -32,35 +33,6 @@ const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
       console.error('Error deleting goal:', error);
       alert('Failed to delete goal.');
     }
-  };
-
-  // Add goal
-  const handleAddGoal = (newGoal) => {
-    // Save new goal to backend
-    axiosInstance.post('/api/goals', newGoal)
-      .then(response => {
-        const addedGoal = response.data;
-        setGoals(prevGoals => [...prevGoals, addedGoal]);
-        onAddGoalClick(); // Call the prop function if needed
-      })
-      .catch(error => {
-        console.error('Error adding goal:', error);
-      });
-  };
-
-  // Edit goal
-  const handleEditGoal = (updatedGoal) => {
-    // Save updated goal to backend
-    axiosInstance.put(`/api/goals/${updatedGoal.id}`, updatedGoal)
-      .then(() => {
-        setGoals(prevGoals =>
-          prevGoals.map(goal => (goal.id === updatedGoal.id ? updatedGoal : goal))
-        );
-        onEditGoalClick(updatedGoal); // Call the prop function if needed
-      })
-      .catch(error => {
-        console.error('Error editing goal:', error);
-      });
   };
 
   return (
@@ -79,7 +51,7 @@ const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
               <div className="icons">
                 <FontAwesomeIcon
                   icon={faEdit}
-                  onClick={(e) => { e.stopPropagation(); handleEditGoal(goal); }}
+                  onClick={(e) => { e.stopPropagation(); onEditGoalClick(goal); }}
                   className="edit-icon"
                 />
                 <FontAwesomeIcon
