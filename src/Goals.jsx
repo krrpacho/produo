@@ -1,32 +1,34 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import axiosInstance from './axiosConfig';
 import './Goals.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
 
 const Goals = ({ goals, onSelectGoal, onDeleteGoal, onAddGoalClick, onEditGoalClick }) => {
+  // Local state for goals
+  const [localGoals, setLocalGoals] = useState(goals);
+
   useEffect(() => {
     // Load goals from local storage when the component mounts
     const storedGoals = localStorage.getItem('goals');
     if (storedGoals) {
-      // Set the goals from local storage if available
-      const parsedGoals = JSON.parse(storedGoals);
-      // Set goals to the state or pass them down as props
-      // Assuming you have a way to update the goals
-      // For example: setGoals(parsedGoals);
+      setLocalGoals(JSON.parse(storedGoals));
     }
   }, []);
 
   useEffect(() => {
     // Save goals to local storage whenever goals are updated
-    localStorage.setItem('goals', JSON.stringify(goals));
-  }, [goals]);
+    localStorage.setItem('goals', JSON.stringify(localGoals));
+  }, [localGoals]);
 
   const handleDelete = async (goalId) => {
     try {
       const response = await axiosInstance.delete(`/api/goals/${goalId}`);
       if (response.status === 204) {
         alert('Goal deleted successfully!');
+        // Remove from local state
+        const updatedGoals = localGoals.filter(goal => goal.id !== goalId);
+        setLocalGoals(updatedGoals);
         onDeleteGoal(goalId);
       } else {
         alert('Failed to delete goal.');
@@ -42,7 +44,7 @@ const Goals = ({ goals, onSelectGoal, onDeleteGoal, onAddGoalClick, onEditGoalCl
       <div className="goals-container">
         <h1 style={{ color: '#ffffff' }}>Your goals:</h1>
         <ul>
-          {goals.map(goal => (
+          {localGoals.map(goal => (
             <li 
               key={goal.id} 
               style={{ backgroundColor: goal.color }} 
