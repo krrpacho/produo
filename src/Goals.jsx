@@ -1,32 +1,33 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import axiosInstance from './axiosConfig';
 import './Goals.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
 
-const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
-  const [goals, setGoals] = useState([]);
-
-  // Load goals from local storage when the component mounts
+const Goals = ({ goals, onSelectGoal, onDeleteGoal, onAddGoalClick, onEditGoalClick }) => {
   useEffect(() => {
-    const savedGoals = JSON.parse(localStorage.getItem('goals')) || [];
-    setGoals(savedGoals);
+    // Load goals from local storage when the component mounts
+    const storedGoals = localStorage.getItem('goals');
+    if (storedGoals) {
+      // Set the goals from local storage if available
+      const parsedGoals = JSON.parse(storedGoals);
+      // Set goals to the state or pass them down as props
+      // Assuming you have a way to update the goals
+      // For example: setGoals(parsedGoals);
+    }
   }, []);
 
-  // Save goals to local storage whenever `goals` changes
   useEffect(() => {
+    // Save goals to local storage whenever goals are updated
     localStorage.setItem('goals', JSON.stringify(goals));
   }, [goals]);
 
-  // Handle goal deletion
   const handleDelete = async (goalId) => {
     try {
       const response = await axiosInstance.delete(`/api/goals/${goalId}`);
       if (response.status === 204) {
         alert('Goal deleted successfully!');
-        // Remove goal from state and local storage after deletion
-        const updatedGoals = goals.filter(goal => goal.id !== goalId);
-        setGoals(updatedGoals);
+        onDeleteGoal(goalId);
       } else {
         alert('Failed to delete goal.');
       }
@@ -34,20 +35,6 @@ const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
       console.error('Error deleting goal:', error);
       alert('Failed to delete goal.');
     }
-  };
-
-  // Handle new goal addition
-  const handleAddGoal = (newGoal) => {
-    const updatedGoals = [...goals, newGoal];
-    setGoals(updatedGoals);
-  };
-
-  // Handle goal editing
-  const handleEditGoal = (updatedGoal) => {
-    const updatedGoals = goals.map(goal =>
-      goal.id === updatedGoal.id ? updatedGoal : goal
-    );
-    setGoals(updatedGoals);
   };
 
   return (
@@ -66,7 +53,7 @@ const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
               <div className="icons">
                 <FontAwesomeIcon
                   icon={faEdit}
-                  onClick={(e) => { e.stopPropagation(); handleEditGoal(goal); }}
+                  onClick={(e) => { e.stopPropagation(); onEditGoalClick(goal); }}
                   className="edit-icon"
                 />
                 <FontAwesomeIcon
