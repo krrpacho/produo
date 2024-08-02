@@ -23,9 +23,8 @@ const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
       const response = await axiosInstance.delete(`/api/goals/${goalId}`);
       if (response.status === 204) {
         alert('Goal deleted successfully!');
-        // Remove goal from state and local storage
+        // Remove goal from state
         setGoals(prevGoals => prevGoals.filter(goal => goal.id !== goalId));
-        localStorage.setItem('goals', JSON.stringify(goals));
       } else {
         alert('Failed to delete goal.');
       }
