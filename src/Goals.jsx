@@ -1,17 +1,19 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import axiosInstance from './axiosConfig';
 import './Goals.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
 
-const Goals = ({ goals, onSetGoals, onSelectGoal, onDeleteGoal, onAddGoalClick, onEditGoalClick }) => {
+const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
+  const [goals, setGoals] = useState([]);
+
   // Load goals from local storage on mount
   useEffect(() => {
     const savedGoals = JSON.parse(localStorage.getItem('goals'));
     if (savedGoals) {
-      onSetGoals(savedGoals);
+      setGoals(savedGoals);
     }
-  }, [onSetGoals]);
+  }, []);
 
   // Save goals to local storage whenever they change
   useEffect(() => {
@@ -23,7 +25,7 @@ const Goals = ({ goals, onSetGoals, onSelectGoal, onDeleteGoal, onAddGoalClick, 
       const response = await axiosInstance.delete(`/api/goals/${goalId}`);
       if (response.status === 204) {
         alert('Goal deleted successfully!');
-        onDeleteGoal(goalId);
+        setGoals(goals.filter(goal => goal.id !== goalId));
       } else {
         alert('Failed to delete goal.');
       }
