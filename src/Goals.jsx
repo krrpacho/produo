@@ -4,18 +4,17 @@ import './Goals.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
 
-const Goals = ({ goals, onSelectGoal, onDeleteGoal, onAddGoalClick, onEditGoalClick }) => {
+const Goals = ({ goals, onSetGoals, onSelectGoal, onDeleteGoal, onAddGoalClick, onEditGoalClick }) => {
+  // Load goals from local storage on mount
   useEffect(() => {
-    // Retrieve goals from local storage and update the state
-    const storedGoals = localStorage.getItem('goals');
-    if (storedGoals) {
-      const parsedGoals = JSON.parse(storedGoals);
-      onSelectGoal(parsedGoals); // Assuming this updates the state with retrieved goals
+    const savedGoals = JSON.parse(localStorage.getItem('goals'));
+    if (savedGoals) {
+      onSetGoals(savedGoals);
     }
-  }, [onSelectGoal]);
+  }, [onSetGoals]);
 
+  // Save goals to local storage whenever they change
   useEffect(() => {
-    // Save goals to local storage whenever they are updated
     localStorage.setItem('goals', JSON.stringify(goals));
   }, [goals]);
 
