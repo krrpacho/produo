@@ -1,44 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import axiosInstance from './axiosConfig';
 import './Goals.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
 
-const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
-  const [goals, setGoals] = useState([]);
-
-  // Load goals from local storage or server on component mount
-  useEffect(() => {
-    const loadGoals = async () => {
-      const savedGoals = JSON.parse(localStorage.getItem('goals'));
-      if (savedGoals) {
-        setGoals(savedGoals);
-      } else {
-        try {
-          const response = await axiosInstance.get('/api/goals');
-          const fetchedGoals = response.data;
-          setGoals(fetchedGoals);
-          localStorage.setItem('goals', JSON.stringify(fetchedGoals));
-        } catch (error) {
-          console.error('Error fetching goals:', error);
-        }
-      }
-    };
-
-    loadGoals();
-  }, []);
-
-  // Save goals to local storage whenever the goals state changes
-  useEffect(() => {
-    localStorage.setItem('goals', JSON.stringify(goals));
-  }, [goals]);
-
+const Goals = ({ goals, onSelectGoal, onDeleteGoal, onAddGoalClick, onEditGoalClick }) => {
   const handleDelete = async (goalId) => {
     try {
       const response = await axiosInstance.delete(`/api/goals/${goalId}`);
       if (response.status === 204) {
         alert('Goal deleted successfully!');
-        setGoals((prevGoals) => prevGoals.filter(goal => goal.id !== goalId));
+        onDeleteGoal(goalId);
       } else {
         alert('Failed to delete goal.');
       }
@@ -48,26 +20,12 @@ const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
     }
   };
 
-  const handleAddGoal = (newGoal) => {
-    setGoals((prevGoals) => [...prevGoals, newGoal]);
-    localStorage.setItem('goals', JSON.stringify([...goals, newGoal]));
-    onAddGoalClick();
-  };
-
-  const handleEditGoal = (updatedGoal) => {
-    setGoals((prevGoals) =>
-      prevGoals.map((goal) => (goal.id === updatedGoal.id ? updatedGoal : goal))
-    );
-    localStorage.setItem('goals', JSON.stringify(goals.map((goal) => (goal.id === updatedGoal.id ? updatedGoal : goal))));
-    onEditGoalClick(updatedGoal);
-  };
-
   return (
     <div className="rect">
       <div className="goals-container">
         <h1 style={{ color: '#ffffff' }}>Your goals:</h1>
         <ul>
-          {goals.map((goal) => (
+          {goals.map(goal => (
             <li 
               key={goal.id} 
               style={{ backgroundColor: goal.color }} 
@@ -78,7 +36,7 @@ const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
               <div className="icons">
                 <FontAwesomeIcon
                   icon={faEdit}
-                  onClick={(e) => { e.stopPropagation(); handleEditGoal(goal); }}
+                  onClick={(e) => { e.stopPropagation(); onEditGoalClick(goal); }}
                   className="edit-icon"
                 />
                 <FontAwesomeIcon
@@ -100,4 +58,4 @@ const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
   );
 };
 
-export default Goals;
+export default Goals;//old
