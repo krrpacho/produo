@@ -7,13 +7,13 @@ import { faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
 const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
   const [goals, setGoals] = useState([]);
 
-  // Load goals from local storage on component mount
+  // Load goals from local storage when the component mounts
   useEffect(() => {
     const savedGoals = JSON.parse(localStorage.getItem('goals')) || [];
     setGoals(savedGoals);
   }, []);
 
-  // Save goals to local storage whenever the goals state changes
+  // Save goals to local storage whenever `goals` changes
   useEffect(() => {
     localStorage.setItem('goals', JSON.stringify(goals));
   }, [goals]);
@@ -24,8 +24,9 @@ const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
       const response = await axiosInstance.delete(`/api/goals/${goalId}`);
       if (response.status === 204) {
         alert('Goal deleted successfully!');
-        // Remove goal from state
-        setGoals(prevGoals => prevGoals.filter(goal => goal.id !== goalId));
+        // Remove goal from state and local storage after deletion
+        const updatedGoals = goals.filter(goal => goal.id !== goalId);
+        setGoals(updatedGoals);
       } else {
         alert('Failed to delete goal.');
       }
@@ -37,24 +38,16 @@ const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
 
   // Handle new goal addition
   const handleAddGoal = (newGoal) => {
-    setGoals(prevGoals => {
-      const updatedGoals = [...prevGoals, newGoal];
-      localStorage.setItem('goals', JSON.stringify(updatedGoals));
-      return updatedGoals;
-    });
-    onAddGoalClick(); // Call the prop function if needed
+    const updatedGoals = [...goals, newGoal];
+    setGoals(updatedGoals);
   };
 
   // Handle goal editing
   const handleEditGoal = (updatedGoal) => {
-    setGoals(prevGoals => {
-      const updatedGoals = prevGoals.map(goal =>
-        goal.id === updatedGoal.id ? updatedGoal : goal
-      );
-      localStorage.setItem('goals', JSON.stringify(updatedGoals));
-      return updatedGoals;
-    });
-    onEditGoalClick(updatedGoal); // Call the prop function if needed
+    const updatedGoals = goals.map(goal =>
+      goal.id === updatedGoal.id ? updatedGoal : goal
+    );
+    setGoals(updatedGoals);
   };
 
   return (
