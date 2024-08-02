@@ -18,6 +18,7 @@ const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
     localStorage.setItem('goals', JSON.stringify(goals));
   }, [goals]);
 
+  // Handle goal deletion
   const handleDelete = async (goalId) => {
     try {
       const response = await axiosInstance.delete(`/api/goals/${goalId}`);
@@ -32,6 +33,28 @@ const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
       console.error('Error deleting goal:', error);
       alert('Failed to delete goal.');
     }
+  };
+
+  // Handle new goal addition
+  const handleAddGoal = (newGoal) => {
+    setGoals(prevGoals => {
+      const updatedGoals = [...prevGoals, newGoal];
+      localStorage.setItem('goals', JSON.stringify(updatedGoals));
+      return updatedGoals;
+    });
+    onAddGoalClick(); // Call the prop function if needed
+  };
+
+  // Handle goal editing
+  const handleEditGoal = (updatedGoal) => {
+    setGoals(prevGoals => {
+      const updatedGoals = prevGoals.map(goal =>
+        goal.id === updatedGoal.id ? updatedGoal : goal
+      );
+      localStorage.setItem('goals', JSON.stringify(updatedGoals));
+      return updatedGoals;
+    });
+    onEditGoalClick(updatedGoal); // Call the prop function if needed
   };
 
   return (
@@ -50,7 +73,7 @@ const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
               <div className="icons">
                 <FontAwesomeIcon
                   icon={faEdit}
-                  onClick={(e) => { e.stopPropagation(); onEditGoalClick(goal); }}
+                  onClick={(e) => { e.stopPropagation(); handleEditGoal(goal); }}
                   className="edit-icon"
                 />
                 <FontAwesomeIcon
