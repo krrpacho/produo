@@ -25,7 +25,8 @@ const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
       const response = await axiosInstance.delete(`/api/goals/${goalId}`);
       if (response.status === 204) {
         alert('Goal deleted successfully!');
-        setGoals(goals.filter(goal => goal.id !== goalId));
+        const updatedGoals = goals.filter(goal => goal.id !== goalId);
+        setGoals(updatedGoals);
       } else {
         alert('Failed to delete goal.');
       }
