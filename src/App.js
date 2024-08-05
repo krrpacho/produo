@@ -89,78 +89,67 @@ const App = () => {
     fetchWeeklySummary();
   };
 
-  const handleTimeDeleted = (id) => {
-    const updatedTimes = times.filter(time => time.id !== id);
-    setTimes(updatedTimes);
-  };
-
   const switchChart = (chartType) => {
     setCurrentChart(chartType);
   };
 
   const scrollToSection = (section) => {
-    let sectionRef;
     switch (section) {
       case 'goalSection':
-        sectionRef = goalSectionRef;
+        goalSectionRef.current.scrollIntoView({ behavior: 'smooth' });
         break;
       case 'stopwatchSection':
-        sectionRef = stopwatchSectionRef;
+        stopwatchSectionRef.current.scrollIntoView({ behavior: 'smooth' });
         break;
       case 'calendarSection':
-        sectionRef = calendarSectionRef;
+        calendarSectionRef.current.scrollIntoView({ behavior: 'smooth' });
         break;
       case 'chartSection':
-        sectionRef = chartSectionRef;
+        chartSectionRef.current.scrollIntoView({ behavior: 'smooth' });
         break;
       default:
-        sectionRef = goalSectionRef;
+        break;
     }
-    sectionRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const toggleNavbar = () => {
+    setIsNavbarOpen(!isNavbarOpen);
   };
 
   return (
-    <div>
-      <Navbar isNavbarOpen={isNavbarOpen} setIsNavbarOpen={setIsNavbarOpen} scrollToSection={scrollToSection} />
-      <div className="App">
-        <section ref={goalSectionRef}>
+    <div className={`app-container ${isNavbarOpen ? 'navbar-open' : 'navbar-collapsed'}`}>
+      <Navbar onScrollToSection={scrollToSection} toggleNavbar={toggleNavbar} />
+      <div className="main-content">
+        <div ref={goalSectionRef} className="goal-section">
           <Goals
+            goals={goals}
             onSelectGoal={setActiveGoal}
+            onDeleteGoal={fetchGoals}
             onAddGoalClick={() => setShowNewGoal(true)}
             onEditGoalClick={setEditingGoal}
           />
-          {showNewGoal && (
-            <NewGoals onGoalSaved={handleGoalSaved} onClose={() => setShowNewGoal(false)} />
-          )}
+          {showNewGoal && <NewGoals onGoalSaved={handleGoalSaved} onClose={() => setShowNewGoal(false)} />}
           {editingGoal && (
             <EditGoalModal
               goal={editingGoal}
-              onSave={fetchGoals}
+              onGoalUpdated={fetchGoals}
               onClose={() => setEditingGoal(null)}
             />
           )}
-        </section>
-
-        <section ref={stopwatchSectionRef}>
+        </div>
+        <div ref={stopwatchSectionRef} className="stopwatch-section">
           <Stopwatch activeGoal={activeGoal} onTimeAdded={handleTimeAdded} />
-        </section>
-
-        <section ref={calendarSectionRef}>
-          <CalendarComponent times={times} onTimeDeleted={handleTimeDeleted} />
-        </section>
-
-        <section ref={chartSectionRef}>
-          <div className="chart-container">
-            <button className="chart-button" onClick={() => switchChart('weekly')}>Weekly</button>
-            <button className="chart-button" onClick={() => switchChart('monthly')}>Monthly</button>
-            <button className="chart-button" onClick={() => switchChart('yearly')}>Yearly</button>
-            {currentChart === 'weekly' && <ChartComponent weeklyData={weeklyData} />}
-            {currentChart === 'monthly' && <MonthlyBarChart />}
-            {currentChart === 'yearly' && <YearlyBarChart />}
-          </div>
-        </section>
+        </div>
+        <div ref={calendarSectionRef} className="calendar-section">
+          <CalendarComponent times={times} onTimeDeleted={fetchTimes} />
+        </div>
+        <div ref={chartSectionRef} className="chart-section">
+          {currentChart === 'weekly' && <ChartComponent weeklyData={weeklyData} onSwitchChart={() => switchChart('monthly')} />}
+          {currentChart === 'monthly' && <MonthlyBarChart onSwitchChart={() => switchChart('yearly')} />}
+          {currentChart === 'yearly' && <YearlyBarChart onSwitchChart={() => switchChart('weekly')} />}
+        </div>
+        <Footer />  
       </div>
-      <Footer />
     </div>
   );
 };
