@@ -13,17 +13,36 @@ const ChartComponent = ({ onSwitchChart }) => {
   const [dateRange, setDateRange] = useState('');
 
   useEffect(() => {
-    const savedWeeklyData = JSON.parse(localStorage.getItem('weeklyData'));
-    if (savedWeeklyData && savedWeeklyData.weeksAgo === weeksAgo) {
-      setWeeklyData({
-        labels: savedWeeklyData.labels,
-        data: savedWeeklyData.data,
-      });
-      setDateRange(savedWeeklyData.dateRange);
-    } else {
-      fetchWeeklyData(weeksAgo);
-    }
+    fetchWeeklyData(weeksAgo);
   }, [weeksAgo]);
+
+  const fetchWeeklyData = async (weeksAgo) => {
+    try {
+      const response = await axiosInstance.get(`/api/times/weekly-summary?weeksAgo=${weeksAgo}`);
+      const data = response.data;
+      const labels = daysOfWeek;
+      const values = labels.map(day => data[day] / 60); 
+      setWeeklyData({ labels, data: values });
+      setDateRange(calculateDateRange(weeksAgo));
+    } catch (error) {
+      console.error('Error fetching weekly summary:', error);
+    }
+  };
+
+  const calculateDateRange = (weeksAgo) => {
+    const endDate = new Date();
+    endDate.setDate(endDate.getDate() - endDate.getDay() + 7 - (weeksAgo * 7));
+    const startDate = new Date(endDate);
+    startDate.setDate(startDate.getDate() - 6);
+
+    const formatDate = (date) => {
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      return `${day}.${month}`;
+    };
+
+    return `${formatDate(startDate)} - ${formatDate(endDate)}`;
+  };
 
   useEffect(() => {
     if (chartRef.current && weeklyData.labels.length > 0) {
@@ -76,39 +95,6 @@ const ChartComponent = ({ onSwitchChart }) => {
       });
     }
   }, [weeklyData]);
-
-  const fetchWeeklyData = async (weeksAgo) => {
-    try {
-      const response = await axiosInstance.get(`/api/times/weekly-summary?weeksAgo=${weeksAgo}`);
-      const data = response.data;
-      console.log('Weekly data fetched:', data); // Debugging line
-      const labels = daysOfWeek;
-      const values = labels.map(day => data[day] ? data[day] / 60 : 0); 
-      const dateRange = calculateDateRange(weeksAgo);
-      const newWeeklyData = { labels, data: values, dateRange };
-
-      setWeeklyData({ labels, data: values });
-      setDateRange(dateRange);
-      localStorage.setItem('weeklyData', JSON.stringify({ ...newWeeklyData, weeksAgo }));
-    } catch (error) {
-      console.error('Error fetching weekly summary:', error);
-    }
-  };
-
-  const calculateDateRange = (weeksAgo) => {
-    const endDate = new Date();
-    endDate.setDate(endDate.getDate() - endDate.getDay() + 7 - (weeksAgo * 7));
-    const startDate = new Date(endDate);
-    startDate.setDate(startDate.getDate() - 6);
-
-    const formatDate = (date) => {
-      const day = String(date.getDate()).padStart(2, '0');
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      return `${day}.${month}`;
-    };
-
-    return `${formatDate(startDate)} - ${formatDate(endDate)}`;
-  };
 
   const handlePreviousWeek = () => {
     setWeeksAgo(weeksAgo + 1);

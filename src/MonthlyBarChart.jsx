@@ -11,17 +11,40 @@ const MonthlyBarChart = ({ onSwitchChart }) => {
   const [dateRange, setDateRange] = useState('');
 
   useEffect(() => {
-    const savedMonthlyData = JSON.parse(localStorage.getItem('monthlyData'));
-    if (savedMonthlyData && savedMonthlyData.monthsAgo === monthsAgo) {
-      setMonthlyData({
-        labels: savedMonthlyData.labels,
-        data: savedMonthlyData.data,
-      });
-      setDateRange(savedMonthlyData.dateRange);
-    } else {
-      fetchMonthlyData(monthsAgo);
-    }
+    fetchMonthlyData(monthsAgo);
   }, [monthsAgo]);
+
+  const fetchMonthlyData = async (monthsAgo) => {
+    try {
+      const response = await axiosInstance.get(`/api/times/monthly-summary?monthsAgo=${monthsAgo}`);
+      const data = response.data;
+
+      const order = ['1-8', '9-16', '17-23', '24-31'];
+
+      const sortedLabels = order;
+      const sortedData = order.map(period => data[period] ? data[period] / 60 : 0); 
+
+      setMonthlyData({ labels: sortedLabels, data: sortedData });
+      setDateRange(calculateDateRange(monthsAgo));
+    } catch (error) {
+      console.error('Error fetching monthly summary:', error);
+    }
+  };
+
+  const calculateDateRange = (monthsAgo) => {
+    const date = new Date();
+    if (monthsAgo > 0) {
+      date.setMonth(date.getMonth() - monthsAgo);
+    }
+
+    const options = { month: 'long', year: 'numeric' };
+    const formatter = new Intl.DateTimeFormat('en-US', options);
+    const monthYear = formatter.format(date);
+
+    const [month, year] = monthYear.split(' ');
+    const capitalizedMonth = month.charAt(0).toUpperCase() + month.slice(1);
+    return `${capitalizedMonth} ${year}`;
+  };
 
   useEffect(() => {
     if (chartRef.current && monthlyData.labels.length > 0) {
@@ -75,41 +98,6 @@ const MonthlyBarChart = ({ onSwitchChart }) => {
     }
   }, [monthlyData]);
 
-  const fetchMonthlyData = async (monthsAgo) => {
-    try {
-      const response = await axiosInstance.get(`/api/times/monthly-summary?monthsAgo=${monthsAgo}`);
-      const data = response.data;
-      console.log('Monthly data fetched:', data); // Debugging line
-
-      const order = ['1-8', '9-16', '17-23', '24-31'];
-      const sortedLabels = order;
-      const sortedData = order.map(period => data[period] ? data[period] / 60 : 0); 
-
-      const newMonthlyData = { labels: sortedLabels, data: sortedData, dateRange: calculateDateRange(monthsAgo) };
-
-      setMonthlyData({ labels: sortedLabels, data: sortedData });
-      setDateRange(newMonthlyData.dateRange);
-      localStorage.setItem('monthlyData', JSON.stringify({ ...newMonthlyData, monthsAgo }));
-    } catch (error) {
-      console.error('Error fetching monthly summary:', error);
-    }
-  };
-
-  const calculateDateRange = (monthsAgo) => {
-    const date = new Date();
-    if (monthsAgo > 0) {
-      date.setMonth(date.getMonth() - monthsAgo);
-    }
-
-    const options = { month: 'long', year: 'numeric' };
-    const formatter = new Intl.DateTimeFormat('en-US', options);
-    const monthYear = formatter.format(date);
-
-    const [month, year] = monthYear.split(' ');
-    const capitalizedMonth = month.charAt(0).toUpperCase() + month.slice(1);
-    return `${capitalizedMonth} ${year}`;
-  };
-
   const handlePreviousMonth = () => {
     setMonthsAgo(monthsAgo + 1);
   };
@@ -127,7 +115,7 @@ const MonthlyBarChart = ({ onSwitchChart }) => {
     const rangeMonthIndex = new Date(Date.parse(dateRangeMonth +" 1, 2022")).getMonth(); // Convert month name to index
     const rangeYear = parseInt(dateRangeYear, 10);
 
-    return (monthsAgo > 0 || (rangeMonthIndex < currentMonth && rangeYear <= currentYear));
+    return (rangeYear < currentYear) || (rangeYear === currentYear && rangeMonthIndex < currentMonth);
   };
 
   return (
