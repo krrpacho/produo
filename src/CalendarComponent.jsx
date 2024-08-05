@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import axiosInstance from './axiosConfig';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import './CalendarComponent.css';
@@ -19,7 +18,7 @@ const CalendarComponent = ({ times, onTimeDeleted }) => {
     setEvents(updatedEvents);
   }, [times]);
 
-  const handleDelete = async (id) => {
+  const handleDelete = (id) => {
     try {
       // Remove time from local storage
       const storedTimes = JSON.parse(localStorage.getItem('times')) || [];
