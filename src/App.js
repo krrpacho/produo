@@ -138,6 +138,8 @@ const App = () => {
           {showNewGoal && <NewGoals onGoalSaved={handleGoalSaved} onClose={() => setShowNewGoal(false)} />}
           {editingGoal && (
             <EditGoalModal
+            goals={goals}
+            setGoals={setGoals}
               goal={editingGoal}
               onGoalUpdated={fetchGoals}
               onClose={() => setEditingGoal(null)}

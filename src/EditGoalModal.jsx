@@ -20,7 +20,7 @@ const EditGoalModal = ({ goals, setGoals, goal, onGoalUpdated, onClose }) => {
         setGoals(updatedGoals);
         localStorage.setItem('goals', JSON.stringify(updatedGoals));
 
-        onGoalUpdated();
+        onGoalUpdated(updatedGoal); // Pass the updated goal to the callback
         onClose();
       } else {
         alert('Failed to update goal.');
