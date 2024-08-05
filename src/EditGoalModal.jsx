@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axiosInstance from './axiosConfig';
 import './EditGoalModal.css';
 
-const EditGoalModal = ({ goals, setGoals, goal, onGoalUpdated, onClose }) => {
+const EditGoalModal = ({ goal, onGoalUpdated, onClose }) => {
   const [name, setName] = useState(goal.name);
   const [targetTime, setTargetTime] = useState(goal.targetTime);
   const [color, setColor] = useState(goal.color);
@@ -12,19 +12,10 @@ const EditGoalModal = ({ goals, setGoals, goal, onGoalUpdated, onClose }) => {
     try {
       const updatedGoal = { ...goal, name, targetTime, color };
       const response = await axiosInstance.put(`/api/goals/${goal.id}`, updatedGoal);
-      
-      console.log('Response from server:', response); // Log response for debugging
-
-      if (response.status === 200 || response.status === 204) {
+      if (response.status === 200) {
         alert('Goal updated successfully!');
-
-        // Update the goals list in local storage
-        const updatedGoals = goals.map(g => g.id === goal.id ? updatedGoal : g);
-        setGoals(updatedGoals);
-        localStorage.setItem('goals', JSON.stringify(updatedGoals));
-
-        onGoalUpdated(updatedGoal); // Pass the updated goal to the callback
-        onClose();
+        onGoalUpdated();  
+        onClose();       
       } else {
         alert('Failed to update goal.');
       }

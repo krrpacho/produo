@@ -81,8 +81,9 @@ const ChartComponent = ({ onSwitchChart }) => {
     try {
       const response = await axiosInstance.get(`/api/times/weekly-summary?weeksAgo=${weeksAgo}`);
       const data = response.data;
+      console.log('Weekly data fetched:', data); // Debugging line
       const labels = daysOfWeek;
-      const values = labels.map(day => data[day] / 60); 
+      const values = labels.map(day => data[day] ? data[day] / 60 : 0); 
       const dateRange = calculateDateRange(weeksAgo);
       const newWeeklyData = { labels, data: values, dateRange };
 

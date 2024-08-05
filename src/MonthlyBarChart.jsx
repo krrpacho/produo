@@ -79,9 +79,9 @@ const MonthlyBarChart = ({ onSwitchChart }) => {
     try {
       const response = await axiosInstance.get(`/api/times/monthly-summary?monthsAgo=${monthsAgo}`);
       const data = response.data;
+      console.log('Monthly data fetched:', data); // Debugging line
 
       const order = ['1-8', '9-16', '17-23', '24-31'];
-
       const sortedLabels = order;
       const sortedData = order.map(period => data[period] ? data[period] / 60 : 0); 
 
@@ -127,7 +127,7 @@ const MonthlyBarChart = ({ onSwitchChart }) => {
     const rangeMonthIndex = new Date(Date.parse(dateRangeMonth +" 1, 2022")).getMonth(); // Convert month name to index
     const rangeYear = parseInt(dateRangeYear, 10);
 
-    return (rangeYear < currentYear) || (rangeYear === currentYear && rangeMonthIndex < currentMonth);
+    return (monthsAgo > 0 || (rangeMonthIndex < currentMonth && rangeYear <= currentYear));
   };
 
   return (
