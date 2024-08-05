@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import axiosInstance from './axiosConfig';
 import './Goals.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
@@ -7,33 +6,17 @@ import { faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
 const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
   const [goals, setGoals] = useState([]);
 
-  // Load goals from local storage on mount
   useEffect(() => {
-    const savedGoals = JSON.parse(localStorage.getItem('goals'));
-    if (savedGoals) {
-      setGoals(savedGoals);
-    }
+    // Retrieve goals from local storage
+    const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
+    setGoals(storedGoals);
   }, []);
 
-  // Save goals to local storage whenever they change
-  useEffect(() => {
-    localStorage.setItem('goals', JSON.stringify(goals));
-  }, [goals]);
-
-  const handleDelete = async (goalId) => {
-    try {
-      const response = await axiosInstance.delete(`/api/goals/${goalId}`);
-      if (response.status === 204) {
-        alert('Goal deleted successfully!');
-        const updatedGoals = goals.filter(goal => goal.id !== goalId);
-        setGoals(updatedGoals);
-      } else {
-        alert('Failed to delete goal.');
-      }
-    } catch (error) {
-      console.error('Error deleting goal:', error);
-      alert('Failed to delete goal.');
-    }
+  const handleDelete = (goalId) => {
+    const updatedGoals = goals.filter(goal => goal.id !== goalId);
+    setGoals(updatedGoals);
+    localStorage.setItem('goals', JSON.stringify(updatedGoals));
+    alert('Goal deleted successfully!');
   };
 
   return (

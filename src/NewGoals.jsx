@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import axiosInstance from './axiosConfig';
 import './NewGoals.css';
 
 const NewGoals = ({ onGoalSaved, onClose }) => {
@@ -7,15 +6,28 @@ const NewGoals = ({ onGoalSaved, onClose }) => {
   const [targetTime, setTargetTime] = useState('');
   const [color, setColor] = useState('#000000');
 
-  const handleSaveGoal = async () => {
+  const handleSaveGoal = () => {
     try {
       const newGoal = {
+        id: Date.now(), // Use current timestamp as a unique ID for the goal
         name: goalName,
         targetTime,
         color
       };
-      await axiosInstance.post('/api/goals', newGoal);
+
+      // Retrieve current goals from local storage
+      const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
+      
+      // Add new goal to the list
+      const updatedGoals = [...storedGoals, newGoal];
+
+      // Save updated goals list to local storage
+      localStorage.setItem('goals', JSON.stringify(updatedGoals));
+      
+      // Notify parent component about the saved goal
       onGoalSaved();
+
+      // Reset form fields
       setGoalName('');
       setTargetTime('');
       setColor('#000000');

@@ -1,39 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axiosInstance from './axiosConfig';
 import './EditGoalModal.css';
 
-const EditGoalModal = ({ goal, onGoalUpdated, onClose }) => {
+const EditGoalModal = ({ goals, setGoals, goal, onGoalUpdated, onClose }) => {
   const [name, setName] = useState(goal.name);
   const [targetTime, setTargetTime] = useState(goal.targetTime);
   const [color, setColor] = useState(goal.color);
-
-  // Load saved goal data from local storage when the modal opens
-  useEffect(() => {
-    const savedGoal = JSON.parse(localStorage.getItem(`goal-${goal.id}`)) || {};
-    setName(savedGoal.name || goal.name);
-    setTargetTime(savedGoal.targetTime || goal.targetTime);
-    setColor(savedGoal.color || goal.color);
-  }, [goal]);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    switch (name) {
-      case 'name':
-        setName(value);
-        break;
-      case 'targetTime':
-        setTargetTime(value);
-        break;
-      case 'color':
-        setColor(value);
-        break;
-      default:
-        break;
-    }
-    
-    // Save the current state to local storage
-    localStorage.setItem(`goal-${goal.id}`, JSON.stringify({ name, targetTime, color }));
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,10 +14,14 @@ const EditGoalModal = ({ goal, onGoalUpdated, onClose }) => {
       const response = await axiosInstance.put(`/api/goals/${goal.id}`, updatedGoal);
       if (response.status === 200) {
         alert('Goal updated successfully!');
-        onGoalUpdated();  
-        onClose(); 
-        // Clear local storage after successful update
-        localStorage.removeItem(`goal-${goal.id}`);
+
+        // Update the goals list in local storage
+        const updatedGoals = goals.map(g => g.id === goal.id ? updatedGoal : g);
+        setGoals(updatedGoals);
+        localStorage.setItem('goals', JSON.stringify(updatedGoals));
+
+        onGoalUpdated();
+        onClose();
       } else {
         alert('Failed to update goal.');
       }
@@ -67,8 +43,7 @@ const EditGoalModal = ({ goal, onGoalUpdated, onClose }) => {
               placeholder="Goal Name"
               className="goal-input"
               value={name}
-              name="name"
-              onChange={handleChange}
+              onChange={(e) => setName(e.target.value)}
               required
             />
           </div>
@@ -79,8 +54,7 @@ const EditGoalModal = ({ goal, onGoalUpdated, onClose }) => {
               placeholder="00:00:00"
               className="time-input"
               value={targetTime}
-              name="targetTime"
-              onChange={handleChange}
+              onChange={(e) => setTargetTime(e.target.value)}
               required
             />
           </div>
@@ -90,8 +64,7 @@ const EditGoalModal = ({ goal, onGoalUpdated, onClose }) => {
               type="color"
               className="color"
               value={color}
-              name="color"
-              onChange={handleChange}
+              onChange={(e) => setColor(e.target.value)}
               required
             />
           </div>

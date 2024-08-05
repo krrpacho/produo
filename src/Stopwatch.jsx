@@ -3,17 +3,23 @@ import axiosInstance from './axiosConfig';
 import './stopwatch.css';
 
 const Stopwatch = ({ activeGoal, onTimeAdded }) => {
-  const [time, setTime] = useState(() => {
-    const savedTime = localStorage.getItem('stopwatchTime');
-    return savedTime ? parseInt(savedTime, 10) : 0;
-  });
-
-  const [isActive, setIsActive] = useState(() => {
-    const savedState = localStorage.getItem('stopwatchState');
-    return savedState === 'true';
-  });
+  const [time, setTime] = useState(0);
+  const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
+    // Load the saved state from local storage when the component mounts
+    const savedState = JSON.parse(localStorage.getItem('stopwatchState'));
+    if (savedState) {
+      setTime(savedState.time);
+      setIsActive(savedState.isActive);
+    }
+  }, []);
+
+  useEffect(() => {
+    // Save the state to local storage when the component unmounts or state changes
+    const savedState = { time, isActive };
+    localStorage.setItem('stopwatchState', JSON.stringify(savedState));
+    
     let interval = null;
     if (isActive) {
       interval = setInterval(() => {
@@ -24,11 +30,6 @@ const Stopwatch = ({ activeGoal, onTimeAdded }) => {
     }
     return () => clearInterval(interval);
   }, [isActive, time]);
-
-  useEffect(() => {
-    localStorage.setItem('stopwatchTime', time);
-    localStorage.setItem('stopwatchState', isActive);
-  }, [time, isActive]);
 
   const handleStartStop = () => {
     setIsActive(!isActive);
@@ -46,12 +47,13 @@ const Stopwatch = ({ activeGoal, onTimeAdded }) => {
       });
       alert('Time saved successfully!');
       onTimeAdded(response.data);
-      localStorage.removeItem('stopwatchTime');
-      localStorage.removeItem('stopwatchState');
     } catch (error) {
       console.error('Error saving time:', error);
     }
     setTime(0);
+
+    // Clear the state from local storage when the session ends
+    localStorage.removeItem('stopwatchState');
   };
 
   const hours = Math.floor(time / 3600);
