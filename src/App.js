@@ -57,13 +57,9 @@ const App = () => {
     localStorage.setItem('currentChart', currentChart);
   }, [currentChart]);
 
-  const fetchGoals = async () => {
-    try {
-      const response = await axiosInstance.get('/api/goals');
-      setGoals(response.data);
-    } catch (error) {
-      console.error('Error fetching goals:', error);
-    }
+  const fetchGoals = () => {
+    const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
+    setGoals(storedGoals);
   };
 
   const fetchTimes = async () => {
@@ -88,8 +84,8 @@ const App = () => {
   };
 
   const handleGoalSaved = () => {
+    fetchGoals(); // Reload goals from local storage
     setShowNewGoal(false);
-    fetchGoals();
   };
 
   const handleTimeAdded = (newTime) => {

@@ -10,7 +10,7 @@ const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
     // Retrieve goals from local storage
     const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
     setGoals(storedGoals);
-  }, []);
+  }, []); // Empty dependency array ensures this runs only once when the component mounts
 
   const handleDelete = (goalId) => {
     const updatedGoals = goals.filter(goal => goal.id !== goalId);
