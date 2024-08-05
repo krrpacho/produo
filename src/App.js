@@ -89,6 +89,13 @@ const App = () => {
     fetchWeeklySummary();
   };
 
+  const handleTimeDeleted = (id) => {
+    const updatedTimes = times.filter(time => time.id !== id);
+    setTimes(updatedTimes);
+    localStorage.setItem('times', JSON.stringify(updatedTimes)); // Update local storage
+    fetchWeeklySummary(); // Update weekly summary after deletion
+  };
+
   const switchChart = (chartType) => {
     setCurrentChart(chartType);
   };
@@ -141,7 +148,7 @@ const App = () => {
           <Stopwatch activeGoal={activeGoal} onTimeAdded={handleTimeAdded} />
         </div>
         <div ref={calendarSectionRef} className="calendar-section">
-          <CalendarComponent times={times} onTimeDeleted={fetchTimes} />
+          <CalendarComponent times={times} onTimeDeleted={handleTimeDeleted} />
         </div>
         <div ref={chartSectionRef} className="chart-section">
           {currentChart === 'weekly' && <ChartComponent weeklyData={weeklyData} onSwitchChart={() => switchChart('monthly')} />}
