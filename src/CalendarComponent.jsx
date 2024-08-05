@@ -21,14 +21,15 @@ const CalendarComponent = ({ times, onTimeDeleted }) => {
 
   const handleDelete = async (id) => {
     try {
-      console.log('Deleting time with ID:', id);
-      const response = await axiosInstance.delete(`/api/times/${id}`);
-      if (response.status === 204) {
-        alert('Time deleted successfully!');
-        onTimeDeleted(id);
-      } else {
-        alert('Failed to delete time.');
-      }
+      // Remove time from local storage
+      const storedTimes = JSON.parse(localStorage.getItem('times')) || [];
+      const updatedTimes = storedTimes.filter(time => time.id !== id);
+      localStorage.setItem('times', JSON.stringify(updatedTimes));
+
+      // Notify parent component to update state
+      onTimeDeleted(id);
+
+      alert('Time deleted successfully!');
     } catch (error) {
       console.error('Error deleting time:', error);
       alert('Failed to delete time.');
