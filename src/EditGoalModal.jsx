@@ -12,7 +12,10 @@ const EditGoalModal = ({ goals, setGoals, goal, onGoalUpdated, onClose }) => {
     try {
       const updatedGoal = { ...goal, name, targetTime, color };
       const response = await axiosInstance.put(`/api/goals/${goal.id}`, updatedGoal);
-      if (response.status === 200) {
+      
+      console.log('Response from server:', response); // Log response for debugging
+
+      if (response.status === 200 || response.status === 204) {
         alert('Goal updated successfully!');
 
         // Update the goals list in local storage
