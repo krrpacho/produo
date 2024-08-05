@@ -62,13 +62,9 @@ const App = () => {
     setGoals(storedGoals);
   };
 
-  const fetchTimes = async () => {
-    try {
-      const response = await axiosInstance.get('/api/times');
-      setTimes(response.data);
-    } catch (error) {
-      console.error('Error fetching times:', error);
-    }
+  const fetchTimes = () => {
+    const storedTimes = JSON.parse(localStorage.getItem('times')) || [];
+    setTimes(storedTimes);
   };
 
   const fetchWeeklySummary = async () => {
@@ -89,7 +85,7 @@ const App = () => {
   };
 
   const handleTimeAdded = (newTime) => {
-    fetchTimes();
+    fetchTimes(); // Reload times from local storage
     fetchWeeklySummary();
   };
 

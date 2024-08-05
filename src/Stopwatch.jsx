@@ -7,19 +7,6 @@ const Stopwatch = ({ activeGoal, onTimeAdded }) => {
   const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
-    // Load the saved state from local storage when the component mounts
-    const savedState = JSON.parse(localStorage.getItem('stopwatchState'));
-    if (savedState) {
-      setTime(savedState.time);
-      setIsActive(savedState.isActive);
-    }
-  }, []);
-
-  useEffect(() => {
-    // Save the state to local storage when the component unmounts or state changes
-    const savedState = { time, isActive };
-    localStorage.setItem('stopwatchState', JSON.stringify(savedState));
-    
     let interval = null;
     if (isActive) {
       interval = setInterval(() => {
@@ -39,21 +26,27 @@ const Stopwatch = ({ activeGoal, onTimeAdded }) => {
     setIsActive(false);
     try {
       const date = new Date().toISOString().split('T')[0];
-      const response = await axiosInstance.post('/api/times', {
-        elapsedTime: `${Math.floor(time / 60)}m ${time % 60}s`,
-        date: date,
+      const elapsedTime = `${Math.floor(time / 60)}m ${time % 60}s`;
+      const newTimeEntry = {
+        elapsedTime,
+        date,
         goalName: activeGoal.name,
         color: activeGoal.color,
-      });
-      alert('Time saved successfully!');
-      onTimeAdded(response.data);
+      };
+
+      // Update local storage
+      const storedTimes = JSON.parse(localStorage.getItem('times')) || [];
+      const updatedTimes = [...storedTimes, newTimeEntry];
+      localStorage.setItem('times', JSON.stringify(updatedTimes));
+
+      // Notify parent component about the new time entry
+      onTimeAdded(newTimeEntry);
+
+      // Reset stopwatch
+      setTime(0);
     } catch (error) {
       console.error('Error saving time:', error);
     }
-    setTime(0);
-
-    // Clear the state from local storage when the session ends
-    localStorage.removeItem('stopwatchState');
   };
 
   const hours = Math.floor(time / 3600);
