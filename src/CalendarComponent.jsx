@@ -20,13 +20,13 @@ const CalendarComponent = ({ times, onTimeDeleted }) => {
 
   const handleDelete = (id) => {
     try {
+      // Notify parent component to update state
+      onTimeDeleted(id);
+
       // Remove time from local storage
       const storedTimes = JSON.parse(localStorage.getItem('times')) || [];
       const updatedTimes = storedTimes.filter(time => time.id !== id);
       localStorage.setItem('times', JSON.stringify(updatedTimes));
-
-      // Notify parent component to update state
-      onTimeDeleted(id);
 
       alert('Time deleted successfully!');
     } catch (error) {

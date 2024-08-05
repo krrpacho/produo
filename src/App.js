@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axiosInstance from './axiosConfig';
 import Goals from './Goals';
 import NewGoals from './NewGoals';
 import EditGoalModal from './EditGoalModal';
@@ -92,6 +91,7 @@ const App = () => {
   const handleTimeDeleted = (id) => {
     const updatedTimes = times.filter(time => time.id !== id);
     setTimes(updatedTimes);
+    fetchWeeklySummary(); // Update weekly summary after deletion
   };
 
   const switchChart = (chartType) => {
