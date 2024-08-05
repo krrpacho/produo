@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import axiosInstance from './axiosConfig';
 import Goals from './Goals';
 import NewGoals from './NewGoals';
 import EditGoalModal from './EditGoalModal';
@@ -88,12 +89,6 @@ const App = () => {
     fetchWeeklySummary();
   };
 
-  const handleTimeDeleted = (id) => {
-    const updatedTimes = times.filter(time => time.id !== id);
-    setTimes(updatedTimes);
-    fetchWeeklySummary(); // Update weekly summary after deletion
-  };
-
   const switchChart = (chartType) => {
     setCurrentChart(chartType);
   };
@@ -146,7 +141,7 @@ const App = () => {
           <Stopwatch activeGoal={activeGoal} onTimeAdded={handleTimeAdded} />
         </div>
         <div ref={calendarSectionRef} className="calendar-section">
-          <CalendarComponent times={times} onTimeDeleted={handleTimeDeleted} />
+          <CalendarComponent times={times} onTimeDeleted={fetchTimes} />
         </div>
         <div ref={chartSectionRef} className="chart-section">
           {currentChart === 'weekly' && <ChartComponent weeklyData={weeklyData} onSwitchChart={() => switchChart('monthly')} />}
