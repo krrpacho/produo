@@ -27,7 +27,6 @@ const App = () => {
   const calendarSectionRef = useRef(null);
   const chartSectionRef = useRef(null);
 
-  // Load state from local storage on component mount
   useEffect(() => {
     const savedGoals = JSON.parse(localStorage.getItem('goals')) || [];
     const savedTimes = JSON.parse(localStorage.getItem('times')) || [];
@@ -40,7 +39,6 @@ const App = () => {
     setCurrentChart(savedCurrentChart);
   }, []);
 
-  // Save state to local storage whenever state changes
   useEffect(() => {
     localStorage.setItem('goals', JSON.stringify(goals));
   }, [goals]);
@@ -57,9 +55,14 @@ const App = () => {
     localStorage.setItem('currentChart', currentChart);
   }, [currentChart]);
 
-  const fetchGoals = () => {
-    const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
-    setGoals(storedGoals);
+  const fetchGoals = async () => {
+    try {
+      const response = await axiosInstance.get('/api/goals');
+      setGoals(response.data);
+      localStorage.setItem('goals', JSON.stringify(response.data));
+    } catch (error) {
+      console.error('Error fetching goals:', error);
+    }
   };
 
   const fetchTimes = () => {
@@ -80,8 +83,13 @@ const App = () => {
   };
 
   const handleGoalSaved = () => {
-    fetchGoals(); // Reload goals from local storage
+    fetchGoals(); // Reload goals from API
     setShowNewGoal(false);
+  };
+
+  const handleGoalUpdated = () => {
+    fetchGoals(); // Reload goals from API
+    setEditingGoal(null);
   };
 
   const handleTimeAdded = (newTime) => {
@@ -138,10 +146,8 @@ const App = () => {
           {showNewGoal && <NewGoals onGoalSaved={handleGoalSaved} onClose={() => setShowNewGoal(false)} />}
           {editingGoal && (
             <EditGoalModal
-            // goals={goals}
-            // setGoals={setGoals}
               goal={editingGoal}
-              onGoalUpdated={fetchGoals}
+              onGoalUpdated={handleGoalUpdated}
               onClose={() => setEditingGoal(null)}
             />
           )}
