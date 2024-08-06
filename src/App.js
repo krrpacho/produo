@@ -55,14 +55,9 @@ const App = () => {
     localStorage.setItem('currentChart', currentChart);
   }, [currentChart]);
 
-  const fetchGoals = async () => {
-    try {
-      const response = await axiosInstance.get('/api/goals');
-      setGoals(response.data);
-      localStorage.setItem('goals', JSON.stringify(response.data));
-    } catch (error) {
-      console.error('Error fetching goals:', error);
-    }
+  const fetchGoals = () => {
+    const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
+    setGoals(storedGoals);
   };
 
   const fetchTimes = () => {
@@ -83,25 +78,20 @@ const App = () => {
   };
 
   const handleGoalSaved = () => {
-    fetchGoals(); // Reload goals from API
+    fetchGoals(); 
     setShowNewGoal(false);
   };
 
-  const handleGoalUpdated = () => {
-    fetchGoals(); // Reload goals from API
-    setEditingGoal(null);
-  };
-
   const handleTimeAdded = (newTime) => {
-    fetchTimes(); // Reload times from local storage
+    fetchTimes(); 
     fetchWeeklySummary();
   };
 
   const handleTimeDeleted = (id) => {
     const updatedTimes = times.filter(time => time.id !== id);
     setTimes(updatedTimes);
-    localStorage.setItem('times', JSON.stringify(updatedTimes)); // Update local storage
-    fetchWeeklySummary(); // Update weekly summary after deletion
+    localStorage.setItem('times', JSON.stringify(updatedTimes)); 
+    fetchWeeklySummary(); 
   };
 
   const switchChart = (chartType) => {
@@ -147,7 +137,7 @@ const App = () => {
           {editingGoal && (
             <EditGoalModal
               goal={editingGoal}
-              onGoalUpdated={handleGoalUpdated}
+              onGoalUpdated={fetchGoals}
               onClose={() => setEditingGoal(null)}
             />
           )}

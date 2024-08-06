@@ -14,6 +14,9 @@ const EditGoalModal = ({ goal, onGoalUpdated, onClose }) => {
       const response = await axiosInstance.put(`/api/goals/${goal.id}`, updatedGoal);
       if (response.status === 200) {
         alert('Goal updated successfully!');
+        const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
+        const updatedGoals = storedGoals.map(g => g.id === goal.id ? updatedGoal : g);
+        localStorage.setItem('goals', JSON.stringify(updatedGoals));
         onGoalUpdated();  
         onClose();       
       } else {
