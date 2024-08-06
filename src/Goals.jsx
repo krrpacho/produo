@@ -7,10 +7,8 @@ const Goals = ({ goals, onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
   const [localGoals, setLocalGoals] = useState(goals);
 
   useEffect(() => {
-    // Retrieve goals from local storage
-    const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
-    setGoals(storedGoals);
-  }, []);
+    setLocalGoals(goals);
+  }, [goals]);
 
   const handleDelete = (goalId) => {
     const updatedGoals = localGoals.filter(goal => goal.id !== goalId);
