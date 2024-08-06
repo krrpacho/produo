@@ -27,6 +27,7 @@ const App = () => {
   const calendarSectionRef = useRef(null);
   const chartSectionRef = useRef(null);
 
+  // Load state from local storage on component mount
   useEffect(() => {
     const savedGoals = JSON.parse(localStorage.getItem('goals')) || [];
     const savedTimes = JSON.parse(localStorage.getItem('times')) || [];
@@ -39,6 +40,7 @@ const App = () => {
     setCurrentChart(savedCurrentChart);
   }, []);
 
+  // Save state to local storage whenever state changes
   useEffect(() => {
     localStorage.setItem('goals', JSON.stringify(goals));
   }, [goals]);
@@ -78,25 +80,20 @@ const App = () => {
   };
 
   const handleGoalSaved = () => {
-    fetchGoals();
+    fetchGoals(); // Reload goals from local storage
     setShowNewGoal(false);
   };
 
-  const handleGoalUpdated = () => {
-    fetchGoals();
-    setEditingGoal(null);
-  };
-
   const handleTimeAdded = (newTime) => {
-    fetchTimes();
+    fetchTimes(); // Reload times from local storage
     fetchWeeklySummary();
   };
 
   const handleTimeDeleted = (id) => {
     const updatedTimes = times.filter(time => time.id !== id);
     setTimes(updatedTimes);
-    localStorage.setItem('times', JSON.stringify(updatedTimes));
-    fetchWeeklySummary();
+    localStorage.setItem('times', JSON.stringify(updatedTimes)); // Update local storage
+    fetchWeeklySummary(); // Update weekly summary after deletion
   };
 
   const switchChart = (chartType) => {
@@ -141,7 +138,7 @@ const App = () => {
           {editingGoal && (
             <EditGoalModal
               goal={editingGoal}
-              onGoalUpdated={handleGoalUpdated}
+              onGoalUpdated={fetchGoals}
               onClose={() => setEditingGoal(null)}
             />
           )}
