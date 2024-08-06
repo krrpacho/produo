@@ -27,6 +27,7 @@ const App = () => {
   const calendarSectionRef = useRef(null);
   const chartSectionRef = useRef(null);
 
+  // Load state from local storage on component mount
   useEffect(() => {
     const savedGoals = JSON.parse(localStorage.getItem('goals')) || [];
     const savedTimes = JSON.parse(localStorage.getItem('times')) || [];
@@ -39,6 +40,7 @@ const App = () => {
     setCurrentChart(savedCurrentChart);
   }, []);
 
+  // Save state to local storage whenever state changes
   useEffect(() => {
     localStorage.setItem('goals', JSON.stringify(goals));
   }, [goals]);
@@ -78,29 +80,20 @@ const App = () => {
   };
 
   const handleGoalSaved = () => {
-    fetchGoals();
+    fetchGoals(); // Reload goals from local storage
     setShowNewGoal(false);
   };
 
   const handleTimeAdded = (newTime) => {
-    fetchTimes();
+    fetchTimes(); // Reload times from local storage
     fetchWeeklySummary();
   };
 
   const handleTimeDeleted = (id) => {
     const updatedTimes = times.filter(time => time.id !== id);
     setTimes(updatedTimes);
-    localStorage.setItem('times', JSON.stringify(updatedTimes));
-    fetchWeeklySummary();
-  };
-
-  const handleGoalUpdated = (updatedGoal) => {
-    const updatedGoals = goals.map(goal =>
-      goal.id === updatedGoal.id ? updatedGoal : goal
-    );
-    setGoals(updatedGoals);
-    localStorage.setItem('goals', JSON.stringify(updatedGoals));
-    setEditingGoal(null);
+    localStorage.setItem('times', JSON.stringify(updatedTimes)); // Update local storage
+    fetchWeeklySummary(); // Update weekly summary after deletion
   };
 
   const switchChart = (chartType) => {
@@ -138,14 +131,17 @@ const App = () => {
           <Goals
             goals={goals}
             onSelectGoal={setActiveGoal}
+            onDeleteGoal={fetchGoals}
             onAddGoalClick={() => setShowNewGoal(true)}
-            onGoalUpdated={goal => setEditingGoal(goal)}
+            onEditGoalClick={setEditingGoal}
           />
           {showNewGoal && <NewGoals onGoalSaved={handleGoalSaved} onClose={() => setShowNewGoal(false)} />}
           {editingGoal && (
             <EditGoalModal
+            // goals={goals}
+            // setGoals={setGoals}
               goal={editingGoal}
-              onGoalUpdated={handleGoalUpdated}
+              onGoalUpdated={fetchGoals}
               onClose={() => setEditingGoal(null)}
             />
           )}

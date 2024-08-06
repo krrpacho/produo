@@ -3,27 +3,20 @@ import './Goals.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
 
-const Goals = ({ onSelectGoal, onAddGoalClick, onGoalUpdated }) => {
+const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
   const [goals, setGoals] = useState([]);
 
   useEffect(() => {
+    // Retrieve goals from local storage
     const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
     setGoals(storedGoals);
-  }, []);
+  }, []); // Empty dependency array ensures this runs only once when the component mounts
 
   const handleDelete = (goalId) => {
     const updatedGoals = goals.filter(goal => goal.id !== goalId);
     setGoals(updatedGoals);
     localStorage.setItem('goals', JSON.stringify(updatedGoals));
     alert('Goal deleted successfully!');
-  };
-
-  const handleEdit = (updatedGoal) => {
-    const updatedGoals = goals.map(goal =>
-      goal.id === updatedGoal.id ? updatedGoal : goal
-    );
-    setGoals(updatedGoals);
-    localStorage.setItem('goals', JSON.stringify(updatedGoals));
   };
 
   return (
@@ -42,7 +35,7 @@ const Goals = ({ onSelectGoal, onAddGoalClick, onGoalUpdated }) => {
               <div className="icons">
                 <FontAwesomeIcon
                   icon={faEdit}
-                  onClick={(e) => { e.stopPropagation(); handleEdit();  onGoalUpdated(goal); }}
+                  onClick={(e) => { e.stopPropagation(); onEditGoalClick(goal); }}
                   className="edit-icon"
                 />
                 <FontAwesomeIcon
