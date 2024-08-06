@@ -27,6 +27,7 @@ const App = () => {
   const calendarSectionRef = useRef(null);
   const chartSectionRef = useRef(null);
 
+  // Load state from local storage on component mount
   useEffect(() => {
     const savedGoals = JSON.parse(localStorage.getItem('goals')) || [];
     const savedTimes = JSON.parse(localStorage.getItem('times')) || [];
@@ -39,6 +40,7 @@ const App = () => {
     setCurrentChart(savedCurrentChart);
   }, []);
 
+  // Save state to local storage whenever state changes
   useEffect(() => {
     localStorage.setItem('goals', JSON.stringify(goals));
   }, [goals]);
@@ -60,13 +62,26 @@ const App = () => {
     setGoals(storedGoals);
   };
 
+  const fetchTimes = () => {
+    const storedTimes = JSON.parse(localStorage.getItem('times')) || [];
+    setTimes(storedTimes);
+  };
+
+  const fetchWeeklySummary = async () => {
+    try {
+      const response = await axiosInstance.get('/api/times/weekly-summary');
+      const summary = response.data;
+      const labels = Object.keys(summary);
+      const data = Object.values(summary).map(seconds => seconds / 60); 
+      setWeeklyData({ labels, data });
+    } catch (error) {
+      console.error('Error fetching weekly summary:', error);
+    }
+  };
+
   const handleGoalSaved = () => {
     fetchGoals(); // Reload goals from local storage
     setShowNewGoal(false);
-  };
-
-  const handleGoalUpdated = () => {
-    fetchGoals(); // Reload goals from local storage
   };
 
   const handleTimeAdded = (newTime) => {
@@ -79,6 +94,11 @@ const App = () => {
     setTimes(updatedTimes);
     localStorage.setItem('times', JSON.stringify(updatedTimes)); // Update local storage
     fetchWeeklySummary(); // Update weekly summary after deletion
+  };
+
+  const handleGoalUpdated = () => {
+    fetchGoals(); // Reload goals from local storage
+    setEditingGoal(null); // Close the edit modal
   };
 
   const switchChart = (chartType) => {
@@ -114,7 +134,7 @@ const App = () => {
       <div className="main-content">
         <div ref={goalSectionRef} className="goal-section">
           <Goals
-            goals={goals} // Pass goals state here
+            goals={goals}
             onSelectGoal={setActiveGoal}
             onAddGoalClick={() => setShowNewGoal(true)}
             onEditGoalClick={setEditingGoal}
@@ -123,7 +143,7 @@ const App = () => {
           {editingGoal && (
             <EditGoalModal
               goal={editingGoal}
-              onGoalUpdated={handleGoalUpdated} // Update goals after editing
+              onGoalUpdated={handleGoalUpdated}
               onClose={() => setEditingGoal(null)}
             />
           )}

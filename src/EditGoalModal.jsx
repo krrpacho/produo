@@ -75,3 +75,4 @@ const EditGoalModal = ({ goal, onGoalUpdated, onClose }) => {
 };
 
 export default EditGoalModal;
+ 

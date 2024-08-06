@@ -7,9 +7,8 @@ const Goals = ({ goals, onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
   const [localGoals, setLocalGoals] = useState([]);
 
   useEffect(() => {
-    // Set local goals from props
     setLocalGoals(goals);
-  }, [goals]); // Update when goals prop changes
+  }, [goals]);
 
   const handleDelete = (goalId) => {
     const updatedGoals = localGoals.filter(goal => goal.id !== goalId);
