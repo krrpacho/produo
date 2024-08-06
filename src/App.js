@@ -27,6 +27,7 @@ const App = () => {
   const calendarSectionRef = useRef(null);
   const chartSectionRef = useRef(null);
 
+  // Load state from local storage on component mount
   useEffect(() => {
     const savedGoals = JSON.parse(localStorage.getItem('goals')) || [];
     const savedTimes = JSON.parse(localStorage.getItem('times')) || [];
@@ -39,6 +40,7 @@ const App = () => {
     setCurrentChart(savedCurrentChart);
   }, []);
 
+  // Save state to local storage whenever state changes
   useEffect(() => {
     localStorage.setItem('goals', JSON.stringify(goals));
   }, [goals]);
@@ -60,38 +62,21 @@ const App = () => {
     setGoals(storedGoals);
   };
 
-  const fetchTimes = () => {
-    const storedTimes = JSON.parse(localStorage.getItem('times')) || [];
-    setTimes(storedTimes);
-  };
-
-  const fetchWeeklySummary = async () => {
-    try {
-      const response = await axiosInstance.get('/api/times/weekly-summary');
-      const summary = response.data;
-      const labels = Object.keys(summary);
-      const data = Object.values(summary).map(seconds => seconds / 60); 
-      setWeeklyData({ labels, data });
-    } catch (error) {
-      console.error('Error fetching weekly summary:', error);
-    }
-  };
-
   const handleGoalSaved = () => {
-    fetchGoals();
+    fetchGoals(); // Reload goals from local storage
     setShowNewGoal(false);
   };
 
   const handleTimeAdded = (newTime) => {
-    fetchTimes();
+    fetchTimes(); // Reload times from local storage
     fetchWeeklySummary();
   };
 
   const handleTimeDeleted = (id) => {
     const updatedTimes = times.filter(time => time.id !== id);
     setTimes(updatedTimes);
-    localStorage.setItem('times', JSON.stringify(updatedTimes));
-    fetchWeeklySummary();
+    localStorage.setItem('times', JSON.stringify(updatedTimes)); // Update local storage
+    fetchWeeklySummary(); // Update weekly summary after deletion
   };
 
   const switchChart = (chartType) => {
@@ -129,7 +114,6 @@ const App = () => {
           <Goals
             goals={goals}
             onSelectGoal={setActiveGoal}
-            onDeleteGoal={fetchGoals}
             onAddGoalClick={() => setShowNewGoal(true)}
             onEditGoalClick={setEditingGoal}
           />
