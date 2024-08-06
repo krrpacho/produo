@@ -18,6 +18,14 @@ const Goals = ({ onSelectGoal, onAddGoalClick, onGoalUpdated }) => {
     alert('Goal deleted successfully!');
   };
 
+  const handleEdit = (updatedGoal) => {
+    const updatedGoals = goals.map(goal =>
+      goal.id === updatedGoal.id ? updatedGoal : goal
+    );
+    setGoals(updatedGoals);
+    localStorage.setItem('goals', JSON.stringify(updatedGoals));
+  };
+
   return (
     <div className="rect">
       <div className="goals-container">

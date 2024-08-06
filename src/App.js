@@ -94,8 +94,12 @@ const App = () => {
     fetchWeeklySummary();
   };
 
-  const handleGoalUpdated = () => {
-    fetchGoals();
+  const handleGoalUpdated = (updatedGoal) => {
+    const updatedGoals = goals.map(goal =>
+      goal.id === updatedGoal.id ? updatedGoal : goal
+    );
+    setGoals(updatedGoals);
+    localStorage.setItem('goals', JSON.stringify(updatedGoals));
     setEditingGoal(null);
   };
 
@@ -135,7 +139,7 @@ const App = () => {
             goals={goals}
             onSelectGoal={setActiveGoal}
             onAddGoalClick={() => setShowNewGoal(true)}
-            onGoalUpdated={setEditingGoal}
+            onGoalUpdated={goal => setEditingGoal(goal)}
           />
           {showNewGoal && <NewGoals onGoalSaved={handleGoalSaved} onClose={() => setShowNewGoal(false)} />}
           {editingGoal && (
