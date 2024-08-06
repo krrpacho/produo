@@ -4,11 +4,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
 
 const Goals = ({ goals, onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
-  const [localGoals, setLocalGoals] = useState(goals);
+  const [localGoals, setLocalGoals] = useState([]);
 
   useEffect(() => {
+    // Set local goals from props
     setLocalGoals(goals);
-  }, [goals]);
+  }, [goals]); // Update when goals prop changes
 
   const handleDelete = (goalId) => {
     const updatedGoals = localGoals.filter(goal => goal.id !== goalId);
@@ -23,10 +24,10 @@ const Goals = ({ goals, onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
         <h1 style={{ color: '#ffffff' }}>Your goals:</h1>
         <ul>
           {localGoals.map(goal => (
-            <li
-              key={goal.id}
-              style={{ backgroundColor: goal.color }}
-              className="goal-item"
+            <li 
+              key={goal.id} 
+              style={{ backgroundColor: goal.color }} 
+              className="goal-item" 
               onClick={() => onSelectGoal(goal)}
             >
               <span>{goal.name}</span>

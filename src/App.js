@@ -27,7 +27,6 @@ const App = () => {
   const calendarSectionRef = useRef(null);
   const chartSectionRef = useRef(null);
 
-  // Load state from local storage on component mount
   useEffect(() => {
     const savedGoals = JSON.parse(localStorage.getItem('goals')) || [];
     const savedTimes = JSON.parse(localStorage.getItem('times')) || [];
@@ -40,7 +39,6 @@ const App = () => {
     setCurrentChart(savedCurrentChart);
   }, []);
 
-  // Save state to local storage whenever state changes
   useEffect(() => {
     localStorage.setItem('goals', JSON.stringify(goals));
   }, [goals]);
@@ -65,6 +63,10 @@ const App = () => {
   const handleGoalSaved = () => {
     fetchGoals(); // Reload goals from local storage
     setShowNewGoal(false);
+  };
+
+  const handleGoalUpdated = () => {
+    fetchGoals(); // Reload goals from local storage
   };
 
   const handleTimeAdded = (newTime) => {
@@ -112,7 +114,7 @@ const App = () => {
       <div className="main-content">
         <div ref={goalSectionRef} className="goal-section">
           <Goals
-            goals={goals}
+            goals={goals} // Pass goals state here
             onSelectGoal={setActiveGoal}
             onAddGoalClick={() => setShowNewGoal(true)}
             onEditGoalClick={setEditingGoal}
@@ -121,7 +123,7 @@ const App = () => {
           {editingGoal && (
             <EditGoalModal
               goal={editingGoal}
-              onGoalUpdated={fetchGoals}
+              onGoalUpdated={handleGoalUpdated} // Update goals after editing
               onClose={() => setEditingGoal(null)}
             />
           )}
