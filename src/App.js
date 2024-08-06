@@ -137,7 +137,7 @@ const App = () => {
             goals={goals}
             onSelectGoal={setActiveGoal}
             onAddGoalClick={() => setShowNewGoal(true)}
-            onEditGoalClick={setEditingGoal}
+            onGoalUpdated={setEditingGoal}
           />
           {showNewGoal && <NewGoals onGoalSaved={handleGoalSaved} onClose={() => setShowNewGoal(false)} />}
           {editingGoal && (
