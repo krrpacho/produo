@@ -84,6 +84,11 @@ const App = () => {
     setShowNewGoal(false);
   };
 
+  const handleGoalUpdated = () => {
+    fetchGoals(); // Reload goals from local storage
+    setEditingGoal(null);
+  };
+
   const handleTimeAdded = (newTime) => {
     fetchTimes(); // Reload times from local storage
     fetchWeeklySummary();
