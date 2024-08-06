@@ -42,7 +42,7 @@ const Goals = ({ onSelectGoal, onAddGoalClick, onGoalUpdated }) => {
               <div className="icons">
                 <FontAwesomeIcon
                   icon={faEdit}
-                  onClick={(e) => { e.stopPropagation(); onGoalUpdated(goal); }}
+                  onClick={(e) => { e.stopPropagation(); handleEdit();  onGoalUpdated(goal); }}
                   className="edit-icon"
                 />
                 <FontAwesomeIcon
