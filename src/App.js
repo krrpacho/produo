@@ -27,6 +27,7 @@ const App = () => {
   const calendarSectionRef = useRef(null);
   const chartSectionRef = useRef(null);
 
+  // Load state from local storage on component mount
   useEffect(() => {
     const savedGoals = JSON.parse(localStorage.getItem('goals')) || [];
     const savedTimes = JSON.parse(localStorage.getItem('times')) || [];
@@ -39,6 +40,7 @@ const App = () => {
     setCurrentChart(savedCurrentChart);
   }, []);
 
+  // Save state to local storage whenever state changes
   useEffect(() => {
     localStorage.setItem('goals', JSON.stringify(goals));
   }, [goals]);
@@ -55,43 +57,29 @@ const App = () => {
     localStorage.setItem('currentChart', currentChart);
   }, [currentChart]);
 
-  const fetchGoals = () => {
+  const handleGoalSaved = () => {
+    // Reload goals from local storage and update state
+    const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
+    setGoals(storedGoals);
+    setShowNewGoal(false);
+  };
+
+  const handleGoalUpdated = () => {
+    // Reload goals from local storage and update state
     const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
     setGoals(storedGoals);
   };
 
-  const fetchTimes = () => {
-    const storedTimes = JSON.parse(localStorage.getItem('times')) || [];
-    setTimes(storedTimes);
-  };
-
-  const fetchWeeklySummary = async () => {
-    try {
-      const response = await axiosInstance.get('/api/times/weekly-summary');
-      const summary = response.data;
-      const labels = Object.keys(summary);
-      const data = Object.values(summary).map(seconds => seconds / 60); 
-      setWeeklyData({ labels, data });
-    } catch (error) {
-      console.error('Error fetching weekly summary:', error);
-    }
-  };
-
-  const handleGoalSaved = () => {
-    fetchGoals(); 
-    setShowNewGoal(false);
-  };
-
   const handleTimeAdded = (newTime) => {
-    fetchTimes(); 
+    fetchTimes(); // Reload times from local storage
     fetchWeeklySummary();
   };
 
   const handleTimeDeleted = (id) => {
     const updatedTimes = times.filter(time => time.id !== id);
     setTimes(updatedTimes);
-    localStorage.setItem('times', JSON.stringify(updatedTimes)); 
-    fetchWeeklySummary(); 
+    localStorage.setItem('times', JSON.stringify(updatedTimes)); // Update local storage
+    fetchWeeklySummary(); // Update weekly summary after deletion
   };
 
   const switchChart = (chartType) => {
@@ -129,7 +117,6 @@ const App = () => {
           <Goals
             goals={goals}
             onSelectGoal={setActiveGoal}
-            onDeleteGoal={fetchGoals}
             onAddGoalClick={() => setShowNewGoal(true)}
             onEditGoalClick={setEditingGoal}
           />
@@ -137,7 +124,7 @@ const App = () => {
           {editingGoal && (
             <EditGoalModal
               goal={editingGoal}
-              onGoalUpdated={fetchGoals}
+              onGoalUpdated={handleGoalUpdated}  // Updated prop
               onClose={() => setEditingGoal(null)}
             />
           )}
