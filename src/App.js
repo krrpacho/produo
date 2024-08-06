@@ -27,7 +27,6 @@ const App = () => {
   const calendarSectionRef = useRef(null);
   const chartSectionRef = useRef(null);
 
-  // Load state from local storage on component mount
   useEffect(() => {
     const savedGoals = JSON.parse(localStorage.getItem('goals')) || [];
     const savedTimes = JSON.parse(localStorage.getItem('times')) || [];
@@ -40,7 +39,6 @@ const App = () => {
     setCurrentChart(savedCurrentChart);
   }, []);
 
-  // Save state to local storage whenever state changes
   useEffect(() => {
     localStorage.setItem('goals', JSON.stringify(goals));
   }, [goals]);
@@ -80,20 +78,25 @@ const App = () => {
   };
 
   const handleGoalSaved = () => {
-    fetchGoals(); // Reload goals from local storage
+    fetchGoals();
     setShowNewGoal(false);
   };
 
+  const handleGoalUpdated = () => {
+    fetchGoals();
+    setEditingGoal(null);
+  };
+
   const handleTimeAdded = (newTime) => {
-    fetchTimes(); // Reload times from local storage
+    fetchTimes();
     fetchWeeklySummary();
   };
 
   const handleTimeDeleted = (id) => {
     const updatedTimes = times.filter(time => time.id !== id);
     setTimes(updatedTimes);
-    localStorage.setItem('times', JSON.stringify(updatedTimes)); // Update local storage
-    fetchWeeklySummary(); // Update weekly summary after deletion
+    localStorage.setItem('times', JSON.stringify(updatedTimes));
+    fetchWeeklySummary();
   };
 
   const switchChart = (chartType) => {
@@ -131,17 +134,14 @@ const App = () => {
           <Goals
             goals={goals}
             onSelectGoal={setActiveGoal}
-            onDeleteGoal={fetchGoals}
             onAddGoalClick={() => setShowNewGoal(true)}
             onEditGoalClick={setEditingGoal}
           />
           {showNewGoal && <NewGoals onGoalSaved={handleGoalSaved} onClose={() => setShowNewGoal(false)} />}
           {editingGoal && (
             <EditGoalModal
-            // goals={goals}
-            // setGoals={setGoals}
               goal={editingGoal}
-              onGoalUpdated={fetchGoals}
+              onGoalUpdated={handleGoalUpdated}
               onClose={() => setEditingGoal(null)}
             />
           )}
