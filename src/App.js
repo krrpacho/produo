@@ -29,10 +29,18 @@ const App = () => {
 
   // Load state from local storage on component mount
   useEffect(() => {
-    fetchGoals();
-    fetchTimes();
+    const savedGoals = JSON.parse(localStorage.getItem('goals')) || [];
+    const savedTimes = JSON.parse(localStorage.getItem('times')) || [];
+    const savedWeeklyData = JSON.parse(localStorage.getItem('weeklyData')) || { labels: [], data: [] };
+    const savedCurrentChart = localStorage.getItem('currentChart') || 'weekly';
+
+    setGoals(savedGoals);
+    setTimes(savedTimes);
+    setWeeklyData(savedWeeklyData);
+    setCurrentChart(savedCurrentChart);
   }, []);
 
+  // Save state to local storage whenever state changes
   useEffect(() => {
     localStorage.setItem('goals', JSON.stringify(goals));
   }, [goals]);
@@ -49,18 +57,9 @@ const App = () => {
     localStorage.setItem('currentChart', currentChart);
   }, [currentChart]);
 
-  const fetchGoals = async () => {
-    try {
-      const response = await axiosInstance.get('/api/goals');
-      if (response.status === 200) {
-        setGoals(response.data);
-        localStorage.setItem('goals', JSON.stringify(response.data));
-      }
-    } catch (error) {
-      console.error('Error fetching goals:', error);
-      const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
-      setGoals(storedGoals);
-    }
+  const fetchGoals = () => {
+    const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
+    setGoals(storedGoals);
   };
 
   const fetchTimes = () => {
@@ -83,14 +82,6 @@ const App = () => {
   const handleGoalSaved = () => {
     fetchGoals(); // Reload goals from local storage
     setShowNewGoal(false);
-  };
-
-  const handleGoalUpdated = (updatedGoal) => {
-    const updatedGoals = goals.map(goal => 
-      goal.id === updatedGoal.id ? updatedGoal : goal
-    );
-    setGoals(updatedGoals);
-    localStorage.setItem('goals', JSON.stringify(updatedGoals));
   };
 
   const handleTimeAdded = (newTime) => {
@@ -148,7 +139,7 @@ const App = () => {
           {editingGoal && (
             <EditGoalModal
               goal={editingGoal}
-              onGoalUpdated={handleGoalUpdated}
+              onGoalUpdated={fetchGoals}
               onClose={() => setEditingGoal(null)}
             />
           )}

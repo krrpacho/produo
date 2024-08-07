@@ -14,13 +14,13 @@ const EditGoalModal = ({ goal, onGoalUpdated, onClose }) => {
       const response = await axiosInstance.put(`/api/goals/${goal.id}`, updatedGoal);
       if (response.status === 200) {
         alert('Goal updated successfully!');
-        onGoalUpdated(updatedGoal);  // Pass updated goal to the callback
+        onGoalUpdated();  
         onClose();       
       } else {
         alert('Failed to update goal.');
       }
     } catch (error) {
-      console.error('Error updating goal:', error);
+      console.error('Error updating goal:', error.response ? error.response.data : error.message);
       alert('Failed to update goal.');
     }
   };
