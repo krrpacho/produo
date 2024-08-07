@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
 import Goals from './Goals';
 import NewGoals from './NewGoals';
 import EditGoalModal from './EditGoalModal';
@@ -66,7 +67,7 @@ const App = () => {
 
   const fetchWeeklySummary = async () => {
     try {
-      const response = await axiosInstance.get('/api/times/weekly-summary');
+      const response = await axios.get('/api/times/weekly-summary');
       const summary = response.data;
       const labels = Object.keys(summary);
       const data = Object.values(summary).map(seconds => seconds / 60); 
