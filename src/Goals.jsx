@@ -10,16 +10,12 @@ const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
     // Retrieve goals from local storage
     const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
     setGoals(storedGoals);
-  }, []);
-
-  useEffect(() => {
-    // Update local storage when goals state changes
-    localStorage.setItem('goals', JSON.stringify(goals));
-  }, [goals]);
+  }, []); // Empty dependency array to only run on mount
 
   const handleDelete = (goalId) => {
     const updatedGoals = goals.filter(goal => goal.id !== goalId);
     setGoals(updatedGoals);
+    localStorage.setItem('goals', JSON.stringify(updatedGoals));
     alert('Goal deleted successfully!');
   };
 
