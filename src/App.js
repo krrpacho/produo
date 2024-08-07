@@ -148,26 +148,19 @@ const App = () => {
             </>
           )}
         </div>
-        <div ref={stopwatchSectionRef}>
-          <Stopwatch
-            activeGoal={activeGoal}
-            onTimeAdded={handleTimeAdded}
-          />
+        <div ref={stopwatchSectionRef} className="stopwatch-section">
+          <Stopwatch activeGoal={activeGoal} onTimeAdded={handleTimeAdded} />
         </div>
-        <div ref={calendarSectionRef}>
-          <CalendarComponent
-            times={times}
-            onDeleteTime={handleTimeDeleted}
-          />
+        <div ref={calendarSectionRef} className="calendar-section">
+          <CalendarComponent times={times} onTimeDeleted={handleTimeDeleted} />
         </div>
-        <div ref={chartSectionRef}>
-          <ChartComponent switchChart={switchChart} />
-          {currentChart === 'weekly' && <WeeklyBarChart weeklyData={weeklyData} />}
-          {currentChart === 'monthly' && <MonthlyBarChart />}
-          {currentChart === 'yearly' && <YearlyBarChart />}
+        <div ref={chartSectionRef} className="chart-section">
+          {currentChart === 'weekly' && <ChartComponent weeklyData={weeklyData} onSwitchChart={() => switchChart('monthly')} />}
+          {currentChart === 'monthly' && <MonthlyBarChart onSwitchChart={() => switchChart('yearly')} />}
+          {currentChart === 'yearly' && <YearlyBarChart onSwitchChart={() => switchChart('weekly')} />}
         </div>
+        <Footer />  
       </div>
-      <Footer />
     </div>
   );
 };
