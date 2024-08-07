@@ -14,7 +14,7 @@ const EditGoalModal = ({ goal, onGoalUpdated, onClose }) => {
       const response = await axiosInstance.put(`/api/goals/${goal.id}`, updatedGoal);
       if (response.status === 200) {
         alert('Goal updated successfully!');
-        onGoalUpdated();  // Ensure this function updates state
+        onGoalUpdated(updatedGoal);  // Pass updated goal to the callback
         onClose();       
       } else {
         alert('Failed to update goal.');
