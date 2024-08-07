@@ -3,18 +3,16 @@ import './Goals.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
 
-const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
-  const [goals, setGoals] = useState([]);
+const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick, goals }) => {
+  const [localGoals, setLocalGoals] = useState(goals);
 
   useEffect(() => {
-    // Retrieve goals from local storage
-    const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
-    setGoals(storedGoals);
-  }, []);
+    setLocalGoals(goals);
+  }, [goals]);
 
   const handleDelete = (goalId) => {
-    const updatedGoals = goals.filter(goal => goal.id !== goalId);
-    setGoals(updatedGoals);
+    const updatedGoals = localGoals.filter(goal => goal.id !== goalId);
+    setLocalGoals(updatedGoals);
     localStorage.setItem('goals', JSON.stringify(updatedGoals));
     alert('Goal deleted successfully!');
   };
@@ -24,7 +22,7 @@ const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
       <div className="goals-container">
         <h1 style={{ color: '#ffffff' }}>Your goals:</h1>
         <ul>
-          {goals.map(goal => (
+          {localGoals.map(goal => (
             <li 
               key={goal.id} 
               style={{ backgroundColor: goal.color }} 

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import axiosInstance from './axiosConfig';
 import './EditGoalModal.css';
 
 const EditGoalModal = ({ goal, onGoalUpdated, onClose }) => {
@@ -7,7 +6,7 @@ const EditGoalModal = ({ goal, onGoalUpdated, onClose }) => {
   const [targetTime, setTargetTime] = useState(goal.targetTime);
   const [color, setColor] = useState(goal.color);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     try {
       const updatedGoal = { ...goal, name, targetTime, color };
