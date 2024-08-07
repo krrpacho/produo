@@ -9,17 +9,25 @@ const NewGoals = ({ onGoalSaved, onClose }) => {
   const handleSaveGoal = () => {
     try {
       const newGoal = {
-        id: Date.now(),
+        id: Date.now(), // Use current timestamp as a unique ID for the goal
         name: goalName,
         targetTime,
         color
       };
 
+      // Retrieve current goals from local storage
       const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
+      
+      // Add new goal to the list
       const updatedGoals = [...storedGoals, newGoal];
+
+      // Save updated goals list to local storage
       localStorage.setItem('goals', JSON.stringify(updatedGoals));
       
-      onGoalSaved(); // Notify parent to re-fetch goals
+      // Notify parent component about the saved goal
+      onGoalSaved();
+
+      // Reset form fields
       setGoalName('');
       setTargetTime('');
       setColor('#000000');

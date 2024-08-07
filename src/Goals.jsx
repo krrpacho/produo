@@ -7,26 +7,19 @@ const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
   const [goals, setGoals] = useState([]);
 
   useEffect(() => {
-    // Function to fetch goals from local storage
-    const fetchGoals = () => {
-      const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
-      setGoals(storedGoals);
-    };
-
-    fetchGoals(); // Initial fetch on component mount
-
-    // Re-fetch goals when local storage changes
-    window.addEventListener('storage', fetchGoals);
-
-    return () => {
-      window.removeEventListener('storage', fetchGoals);
-    };
+    // Retrieve goals from local storage
+    const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
+    setGoals(storedGoals);
   }, []);
+
+  useEffect(() => {
+    // Update local storage when goals state changes
+    localStorage.setItem('goals', JSON.stringify(goals));
+  }, [goals]);
 
   const handleDelete = (goalId) => {
     const updatedGoals = goals.filter(goal => goal.id !== goalId);
     setGoals(updatedGoals);
-    localStorage.setItem('goals', JSON.stringify(updatedGoals));
     alert('Goal deleted successfully!');
   };
 
