@@ -77,8 +77,8 @@ const App = () => {
     }
   };
 
-  const handleGoalSaved = (updatedGoals) => {
-    setGoals(updatedGoals);
+  const handleGoalSaved = () => {
+    fetchGoals();
     setShowNewGoal(false);
   };
 
@@ -141,8 +141,6 @@ const App = () => {
                 />
               )}
               <Goals
-                goals={goals}
-                setGoals={setGoals}
                 onSelectGoal={(goal) => setActiveGoal(goal)}
                 onAddGoalClick={() => setShowNewGoal(true)}
                 onEditGoalClick={(goal) => setEditingGoal(goal)}
@@ -167,4 +165,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default App;//old

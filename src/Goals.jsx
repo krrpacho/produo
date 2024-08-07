@@ -3,16 +3,29 @@ import './Goals.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
 
-const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick, goals }) => {
-  const [localGoals, setLocalGoals] = useState(goals);
+const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
+  const [goals, setGoals] = useState([]);
 
   useEffect(() => {
-    setLocalGoals(goals);
-  }, [goals]);
+    // Function to fetch goals from local storage
+    const fetchGoals = () => {
+      const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
+      setGoals(storedGoals);
+    };
+
+    fetchGoals(); // Initial fetch on component mount
+
+    // Re-fetch goals when local storage changes
+    window.addEventListener('storage', fetchGoals);
+
+    return () => {
+      window.removeEventListener('storage', fetchGoals);
+    };
+  }, []);
 
   const handleDelete = (goalId) => {
-    const updatedGoals = localGoals.filter(goal => goal.id !== goalId);
-    setLocalGoals(updatedGoals);
+    const updatedGoals = goals.filter(goal => goal.id !== goalId);
+    setGoals(updatedGoals);
     localStorage.setItem('goals', JSON.stringify(updatedGoals));
     alert('Goal deleted successfully!');
   };
@@ -22,7 +35,7 @@ const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick, goals }) => {
       <div className="goals-container">
         <h1 style={{ color: '#ffffff' }}>Your goals:</h1>
         <ul>
-          {localGoals.map(goal => (
+          {goals.map(goal => (
             <li 
               key={goal.id} 
               style={{ backgroundColor: goal.color }} 
