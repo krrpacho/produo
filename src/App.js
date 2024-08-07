@@ -27,8 +27,8 @@ const App = () => {
   const calendarSectionRef = useRef(null);
   const chartSectionRef = useRef(null);
 
-  // Load state from local storage on component mount
   useEffect(() => {
+    // Load state from local storage on component mount
     const savedGoals = JSON.parse(localStorage.getItem('goals')) || [];
     const savedTimes = JSON.parse(localStorage.getItem('times')) || [];
     const savedWeeklyData = JSON.parse(localStorage.getItem('weeklyData')) || { labels: [], data: [] };
@@ -40,8 +40,8 @@ const App = () => {
     setCurrentChart(savedCurrentChart);
   }, []);
 
-  // Save state to local storage whenever state changes
   useEffect(() => {
+    // Save state to local storage whenever state changes
     localStorage.setItem('goals', JSON.stringify(goals));
   }, [goals]);
 
@@ -84,7 +84,7 @@ const App = () => {
     setShowNewGoal(false);
   };
 
-  const handleTimeAdded = (newTime) => {
+  const handleTimeAdded = () => {
     fetchTimes(); // Reload times from local storage
     fetchWeeklySummary();
   };
@@ -125,38 +125,37 @@ const App = () => {
 
   return (
     <div className={`app-container ${isNavbarOpen ? 'navbar-open' : 'navbar-collapsed'}`}>
-      <Navbar onScrollToSection={scrollToSection} toggleNavbar={toggleNavbar} />
-      <div className="main-content">
-        <div ref={goalSectionRef} className="goal-section">
+      <Navbar onScrollToSection={scrollToSection} onToggleNavbar={toggleNavbar} />
+      <div className="content">
+        <section ref={goalSectionRef}>
           <Goals
-            goals={goals}
             onSelectGoal={setActiveGoal}
-            onDeleteGoal={fetchGoals}
             onAddGoalClick={() => setShowNewGoal(true)}
             onEditGoalClick={setEditingGoal}
           />
-          {showNewGoal && <NewGoals onGoalSaved={handleGoalSaved} onClose={() => setShowNewGoal(false)} />}
-          {editingGoal && (
-            <EditGoalModal
-              goal={editingGoal}
-              onGoalUpdated={fetchGoals}
-              onClose={() => setEditingGoal(null)}
-            />
+        </section>
+        <section ref={stopwatchSectionRef}>
+          <Stopwatch onTimeAdded={handleTimeAdded} onTimeDeleted={handleTimeDeleted} />
+        </section>
+        <section ref={calendarSectionRef}>
+          <CalendarComponent />
+        </section>
+        <section ref={chartSectionRef}>
+          {currentChart === 'weekly' ? (
+            <WeeklyBarChart data={weeklyData} />
+          ) : currentChart === 'monthly' ? (
+            <MonthlyBarChart data={weeklyData} />
+          ) : (
+            <YearlyBarChart data={weeklyData} />
           )}
-        </div>
-        <div ref={stopwatchSectionRef} className="stopwatch-section">
-          <Stopwatch activeGoal={activeGoal} onTimeAdded={handleTimeAdded} />
-        </div>
-        <div ref={calendarSectionRef} className="calendar-section">
-          <CalendarComponent times={times} onTimeDeleted={handleTimeDeleted} />
-        </div>
-        <div ref={chartSectionRef} className="chart-section">
-          {currentChart === 'weekly' && <ChartComponent weeklyData={weeklyData} onSwitchChart={() => switchChart('monthly')} />}
-          {currentChart === 'monthly' && <MonthlyBarChart onSwitchChart={() => switchChart('yearly')} />}
-          {currentChart === 'yearly' && <YearlyBarChart onSwitchChart={() => switchChart('weekly')} />}
-        </div>
-        <Footer />  
+          <button onClick={() => switchChart('weekly')}>Weekly</button>
+          <button onClick={() => switchChart('monthly')}>Monthly</button>
+          <button onClick={() => switchChart('yearly')}>Yearly</button>
+        </section>
       </div>
+      {showNewGoal && <NewGoals onGoalSaved={handleGoalSaved} onClose={() => setShowNewGoal(false)} />}
+      {editingGoal && <EditGoalModal goal={editingGoal} onGoalUpdated={() => fetchGoals()} onClose={() => setEditingGoal(null)} />}
+      <Footer />
     </div>
   );
 };

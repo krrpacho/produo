@@ -20,7 +20,7 @@ const EditGoalModal = ({ goal, onGoalUpdated, onClose }) => {
         alert('Failed to update goal.');
       }
     } catch (error) {
-      console.error('Error updating goal:', error.response ? error.response.data : error.message);
+      console.error('Error updating goal:', error);
       alert('Failed to update goal.');
     }
   };
