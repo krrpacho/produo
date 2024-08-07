@@ -6,14 +6,14 @@ const EditGoalModal = ({ goal, onGoalUpdated, onClose }) => {
   const [targetTime, setTargetTime] = useState(goal.targetTime);
   const [color, setColor] = useState(goal.color);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const updatedGoal = { ...goal, name, targetTime, color };
       const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
       const updatedGoals = storedGoals.map(g => g.id === goal.id ? updatedGoal : g);
       localStorage.setItem('goals', JSON.stringify(updatedGoals));
-      onGoalUpdated(); // Notify parent component of the update
+      onGoalUpdated(updatedGoals);
       onClose();
     } catch (error) {
       console.error('Error updating goal:', error);
