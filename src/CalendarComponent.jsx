@@ -6,18 +6,14 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import './CalendarComponent.css';
 
 const CalendarComponent = ({ times, onTimeDeleted }) => {
-  const [events, setEvents] = useState([]);
+  
+  const events = times.map(time => ({
+    id: time.id,
+    title: time.elapsedTime,
+    start: time.date,
+    color: time.color
+  }));
 
-  useEffect(() => {
-    // Update events state when times prop changes
-    const updatedEvents = times.map(time => ({
-      id: time.id,
-      title: time.elapsedTime,
-      start: time.date,
-      color: time.color
-    }));
-    setEvents(updatedEvents);
-  }, [times]);
 
   const handleDelete = (id) => {
     try {
@@ -64,4 +60,4 @@ const CalendarComponent = ({ times, onTimeDeleted }) => {
   );
 };
 
-export default CalendarComponent;
+export default CalendarComponent;//

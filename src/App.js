@@ -28,7 +28,6 @@ const App = () => {
   const chartSectionRef = useRef(null);
 
   useEffect(() => {
-    // Load data from local storage on component mount
     const savedGoals = JSON.parse(localStorage.getItem('goals')) || [];
     const savedTimes = JSON.parse(localStorage.getItem('times')) || [];
     const savedWeeklyData = JSON.parse(localStorage.getItem('weeklyData')) || { labels: [], data: [] };
@@ -41,7 +40,6 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    // Update local storage whenever state changes
     localStorage.setItem('goals', JSON.stringify(goals));
   }, [goals]);
 
@@ -57,9 +55,30 @@ const App = () => {
     localStorage.setItem('currentChart', currentChart);
   }, [currentChart]);
 
+  const fetchGoals = () => {
+    const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
+    setGoals(storedGoals);
+  };
+
+  const fetchTimes = () => {
+    const storedTimes = JSON.parse(localStorage.getItem('times')) || [];
+    setTimes(storedTimes);
+  };
+
+  const fetchWeeklySummary = async () => {
+    try {
+      const response = await axiosInstance.get('/api/times/weekly-summary');
+      const summary = response.data;
+      const labels = Object.keys(summary);
+      const data = Object.values(summary).map(seconds => seconds / 60); 
+      setWeeklyData({ labels, data });
+    } catch (error) {
+      console.error('Error fetching weekly summary:', error);
+    }
+  };
+
   const handleGoalSaved = () => {
-    const savedGoals = JSON.parse(localStorage.getItem('goals')) || [];
-    setGoals(savedGoals);
+    fetchGoals();
     setShowNewGoal(false);
   };
 
@@ -78,18 +97,7 @@ const App = () => {
       return updatedTimes;
     });
   };
-
-  const fetchWeeklySummary = async () => {
-    try {
-      const response = await axiosInstance.get('/api/times/weekly-summary');
-      const summary = response.data;
-      const labels = Object.keys(summary);
-      const data = Object.values(summary).map(seconds => seconds / 60); 
-      setWeeklyData({ labels, data });
-    } catch (error) {
-      console.error('Error fetching weekly summary:', error);
-    }
-  };
+  
 
   const switchChart = (chartType) => {
     setCurrentChart(chartType);
@@ -162,4 +170,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default App;//
