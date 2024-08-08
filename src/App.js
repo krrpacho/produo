@@ -27,10 +27,16 @@ const App = () => {
   const calendarSectionRef = useRef(null);
   const chartSectionRef = useRef(null);
 
-  // Load state from local storage on component mount
   useEffect(() => {
-    fetchGoals();
-    fetchTimes();
+    const savedGoals = JSON.parse(localStorage.getItem('goals')) || [];
+    const savedTimes = JSON.parse(localStorage.getItem('times')) || [];
+    const savedWeeklyData = JSON.parse(localStorage.getItem('weeklyData')) || { labels: [], data: [] };
+    const savedCurrentChart = localStorage.getItem('currentChart') || 'weekly';
+
+    setGoals(savedGoals);
+    setTimes(savedTimes);
+    setWeeklyData(savedWeeklyData);
+    setCurrentChart(savedCurrentChart);
   }, []);
 
   useEffect(() => {
@@ -49,18 +55,9 @@ const App = () => {
     localStorage.setItem('currentChart', currentChart);
   }, [currentChart]);
 
-  const fetchGoals = async () => {
-    try {
-      const response = await axiosInstance.get('/api/goals');
-      if (response.status === 200) {
-        setGoals(response.data);
-        localStorage.setItem('goals', JSON.stringify(response.data));
-      }
-    } catch (error) {
-      console.error('Error fetching goals:', error);
-      const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
-      setGoals(storedGoals);
-    }
+  const fetchGoals = () => {
+    const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
+    setGoals(storedGoals);
   };
 
   const fetchTimes = () => {
@@ -81,28 +78,20 @@ const App = () => {
   };
 
   const handleGoalSaved = () => {
-    fetchGoals(); // Reload goals from local storage
+    fetchGoals();
     setShowNewGoal(false);
   };
 
-  const handleGoalUpdated = (updatedGoal) => {
-    const updatedGoals = goals.map(goal => 
-      goal.id === updatedGoal.id ? updatedGoal : goal
-    );
-    setGoals(updatedGoals);
-    localStorage.setItem('goals', JSON.stringify(updatedGoals));
-  };
-
   const handleTimeAdded = (newTime) => {
-    fetchTimes(); // Reload times from local storage
+    fetchTimes();
     fetchWeeklySummary();
   };
 
   const handleTimeDeleted = (id) => {
     const updatedTimes = times.filter(time => time.id !== id);
     setTimes(updatedTimes);
-    localStorage.setItem('times', JSON.stringify(updatedTimes)); // Update local storage
-    fetchWeeklySummary(); // Update weekly summary after deletion
+    localStorage.setItem('times', JSON.stringify(updatedTimes));
+    fetchWeeklySummary();
   };
 
   const switchChart = (chartType) => {
@@ -136,21 +125,27 @@ const App = () => {
     <div className={`app-container ${isNavbarOpen ? 'navbar-open' : 'navbar-collapsed'}`}>
       <Navbar onScrollToSection={scrollToSection} toggleNavbar={toggleNavbar} />
       <div className="main-content">
-        <div ref={goalSectionRef} className="goal-section">
-          <Goals
-            goals={goals}
-            onSelectGoal={setActiveGoal}
-            onDeleteGoal={fetchGoals}
-            onAddGoalClick={() => setShowNewGoal(true)}
-            onEditGoalClick={setEditingGoal}
-          />
-          {showNewGoal && <NewGoals onGoalSaved={handleGoalSaved} onClose={() => setShowNewGoal(false)} />}
-          {editingGoal && (
-            <EditGoalModal
-              goal={editingGoal}
-              onGoalUpdated={handleGoalUpdated}
-              onClose={() => setEditingGoal(null)}
+        <div ref={goalSectionRef}>
+          {showNewGoal ? (
+            <NewGoals
+              onGoalSaved={handleGoalSaved}
+              onCancel={() => setShowNewGoal(false)}
             />
+          ) : (
+            <>
+              {editingGoal && (
+                <EditGoalModal
+                  goal={editingGoal}
+                  onGoalUpdated={(updatedGoals) => setGoals(updatedGoals)}
+                  onClose={() => setEditingGoal(null)}
+                />
+              )}
+              <Goals
+                onSelectGoal={(goal) => setActiveGoal(goal)}
+                onAddGoalClick={() => setShowNewGoal(true)}
+                onEditGoalClick={(goal) => setEditingGoal(goal)}
+              />
+            </>
           )}
         </div>
         <div ref={stopwatchSectionRef} className="stopwatch-section">
