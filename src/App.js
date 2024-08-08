@@ -83,16 +83,21 @@ const App = () => {
   };
 
   const handleTimeAdded = (newTime) => {
-    fetchTimes();
-    fetchWeeklySummary();
+    setTimes(prevTimes => {
+      const updatedTimes = [...prevTimes, newTime];
+      localStorage.setItem('times', JSON.stringify(updatedTimes));
+      return updatedTimes;
+    });
   };
-
+  
   const handleTimeDeleted = (id) => {
-    const updatedTimes = times.filter(time => time.id !== id);
-    setTimes(updatedTimes);
-    localStorage.setItem('times', JSON.stringify(updatedTimes));
-    fetchWeeklySummary();
+    setTimes(prevTimes => {
+      const updatedTimes = prevTimes.filter(time => time.id !== id);
+      localStorage.setItem('times', JSON.stringify(updatedTimes));
+      return updatedTimes;
+    });
   };
+  
 
   const switchChart = (chartType) => {
     setCurrentChart(chartType);

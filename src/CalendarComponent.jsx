@@ -20,18 +20,12 @@ const CalendarComponent = ({ times, onTimeDeleted }) => {
 
   const handleDelete = (id) => {
     try {
-      // Update local state and local storage
+      // Update local state first
       const updatedEvents = events.filter(event => event.id !== id);
       setEvents(updatedEvents);
 
-      const storedTimes = JSON.parse(localStorage.getItem('times')) || [];
-      const updatedTimes = storedTimes.filter(time => time.id !== id);
-      localStorage.setItem('times', JSON.stringify(updatedTimes));
-
       // Notify parent component to update its state
       onTimeDeleted(id);
-
-      alert('Time deleted successfully!');
     } catch (error) {
       console.error('Error deleting time:', error);
       alert('Failed to delete time.');
