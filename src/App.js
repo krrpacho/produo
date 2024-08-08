@@ -82,10 +82,6 @@ const App = () => {
     setShowNewGoal(false);
   };
 
-  const handleGoalUpdated = (updatedGoals) => {
-    setGoals(updatedGoals);
-  };
-
   const handleTimeAdded = (newTime) => {
     fetchTimes();
     fetchWeeklySummary();
@@ -140,12 +136,13 @@ const App = () => {
               {editingGoal && (
                 <EditGoalModal
                   goal={editingGoal}
-                  //onGoalUpdated={(updatedGoals) => setGoals(updatedGoals)}
+                  onGoalUpdated={(updatedGoals) => setGoals(updatedGoals)}
                   onClose={() => setEditingGoal(null)}
-                  onGoalUpdated={handleGoalUpdated}
                 />
               )}
               <Goals
+                goals={goals}
+                setGoals={setGoals}
                 onSelectGoal={(goal) => setActiveGoal(goal)}
                 onAddGoalClick={() => setShowNewGoal(true)}
                 onEditGoalClick={(goal) => setEditingGoal(goal)}
@@ -170,4 +167,4 @@ const App = () => {
   );
 };
 
-export default App;//
+export default App;

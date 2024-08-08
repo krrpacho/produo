@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import axiosInstance from './axiosConfig';
 import './EditGoalModal.css';
 
 const EditGoalModal = ({ goal, onGoalUpdated, onClose }) => {
@@ -14,17 +13,13 @@ const EditGoalModal = ({ goal, onGoalUpdated, onClose }) => {
       const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
       const updatedGoals = storedGoals.map(g => g.id === goal.id ? updatedGoal : g);
       localStorage.setItem('goals', JSON.stringify(updatedGoals));
-      
-      // Notify the parent component of the update
       onGoalUpdated(updatedGoals);
-      
       onClose();
     } catch (error) {
       console.error('Error updating goal:', error);
       alert('Failed to update goal.');
     }
   };
-  
 
   return (
     <div className="modal-overlay">
@@ -75,4 +70,4 @@ const EditGoalModal = ({ goal, onGoalUpdated, onClose }) => {
   );
 };
 
-export default EditGoalModal;//
+export default EditGoalModal;

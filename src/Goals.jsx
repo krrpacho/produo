@@ -57,4 +57,4 @@ const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
   );
 };
 
-export default Goals;//
+export default Goals;
