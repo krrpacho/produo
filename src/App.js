@@ -82,6 +82,10 @@ const App = () => {
     setShowNewGoal(false);
   };
 
+  const handleGoalUpdated = (updatedGoals) => {
+    setGoals(updatedGoals);
+  };
+
   const handleTimeAdded = (newTime) => {
     fetchTimes();
     fetchWeeklySummary();
@@ -121,10 +125,6 @@ const App = () => {
     setIsNavbarOpen(!isNavbarOpen);
   };
 
-  const handleGoalUpdated = (updatedGoals) => {
-    setGoals(updatedGoals);
-  };
-
   return (
     <div className={`app-container ${isNavbarOpen ? 'navbar-open' : 'navbar-collapsed'}`}>
       <Navbar onScrollToSection={scrollToSection} toggleNavbar={toggleNavbar} />
@@ -148,7 +148,6 @@ const App = () => {
                 onSelectGoal={(goal) => setActiveGoal(goal)}
                 onAddGoalClick={() => setShowNewGoal(true)}
                 onEditGoalClick={(goal) => setEditingGoal(goal)}
-                onGoalUpdated={handleGoalUpdated}
               />
             </>
           )}

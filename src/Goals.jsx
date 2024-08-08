@@ -3,7 +3,7 @@ import './Goals.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
 
-const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick, onGoalUpdated }) => {
+const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
   const [goals, setGoals] = useState([]);
 
   useEffect(() => {
@@ -17,7 +17,6 @@ const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick, onGoalUpdated })
     setGoals(updatedGoals);
     localStorage.setItem('goals', JSON.stringify(updatedGoals));
     alert('Goal deleted successfully!');
-    onGoalUpdated(updatedGoals); // Trigger update
   };
 
   return (
@@ -58,4 +57,4 @@ const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick, onGoalUpdated })
   );
 };
 
-export default Goals;
+export default Goals;//
