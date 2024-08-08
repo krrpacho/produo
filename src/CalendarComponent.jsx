@@ -9,23 +9,36 @@ const CalendarComponent = ({ times, onTimeDeleted }) => {
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
+    // Update events state when times prop changes
     const updatedEvents = times.map(time => ({
       id: time.id,
       title: time.elapsedTime,
       start: time.date,
-      color: time.color,
+      color: time.color
     }));
     setEvents(updatedEvents);
   }, [times]);
 
   const handleDelete = (id) => {
     try {
-      // Update local state first
-      const updatedEvents = events.filter(event => event.id !== id);
-      setEvents(updatedEvents);
+      // Remove time from local storage
+      const storedTimes = JSON.parse(localStorage.getItem('times')) || [];
+      const updatedTimes = storedTimes.filter(time => time.id !== id);
+      localStorage.setItem('times', JSON.stringify(updatedTimes));
 
-      // Notify parent component to update its state
+      // Notify parent component to update state
       onTimeDeleted(id);
+
+      // Update events state
+      const newEvents = updatedTimes.map(time => ({
+        id: time.id,
+        title: time.elapsedTime,
+        start: time.date,
+        color: time.color
+      }));
+      setEvents(newEvents);
+
+      alert('Time deleted successfully!');
     } catch (error) {
       console.error('Error deleting time:', error);
       alert('Failed to delete time.');
