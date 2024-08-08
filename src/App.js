@@ -70,10 +70,10 @@ const App = () => {
     setGoals(storedGoals);
   };
 
-  const handleTimeAdded = (newTime) => {
-    fetchTimes(); // Reload times from local storage
-    fetchWeeklySummary();
-  };
+  // const handleTimeAdded = (newTime) => {
+  //   fetchTimes(); // Reload times from local storage
+  //   fetchWeeklySummary();
+  // };
 
   const handleTimeDeleted = (id) => {
     const updatedTimes = times.filter(time => time.id !== id);
