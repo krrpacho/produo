@@ -29,18 +29,10 @@ const App = () => {
 
   // Load state from local storage on component mount
   useEffect(() => {
-    const savedGoals = JSON.parse(localStorage.getItem('goals')) || [];
-    const savedTimes = JSON.parse(localStorage.getItem('times')) || [];
-    const savedWeeklyData = JSON.parse(localStorage.getItem('weeklyData')) || { labels: [], data: [] };
-    const savedCurrentChart = localStorage.getItem('currentChart') || 'weekly';
-
-    setGoals(savedGoals);
-    setTimes(savedTimes);
-    setWeeklyData(savedWeeklyData);
-    setCurrentChart(savedCurrentChart);
+    fetchGoals();
+    fetchTimes();
   }, []);
 
-  // Save state to local storage whenever state changes
   useEffect(() => {
     localStorage.setItem('goals', JSON.stringify(goals));
   }, [goals]);
@@ -57,23 +49,54 @@ const App = () => {
     localStorage.setItem('currentChart', currentChart);
   }, [currentChart]);
 
+  const fetchGoals = async () => {
+    try {
+      const response = await axiosInstance.get('/api/goals');
+      if (response.status === 200) {
+        setGoals(response.data);
+        localStorage.setItem('goals', JSON.stringify(response.data));
+      }
+    } catch (error) {
+      console.error('Error fetching goals:', error);
+      const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
+      setGoals(storedGoals);
+    }
+  };
+
+  const fetchTimes = () => {
+    const storedTimes = JSON.parse(localStorage.getItem('times')) || [];
+    setTimes(storedTimes);
+  };
+
+  const fetchWeeklySummary = async () => {
+    try {
+      const response = await axiosInstance.get('/api/times/weekly-summary');
+      const summary = response.data;
+      const labels = Object.keys(summary);
+      const data = Object.values(summary).map(seconds => seconds / 60); 
+      setWeeklyData({ labels, data });
+    } catch (error) {
+      console.error('Error fetching weekly summary:', error);
+    }
+  };
+
   const handleGoalSaved = () => {
-    // Reload goals from local storage and update state
-    const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
-    setGoals(storedGoals);
+    fetchGoals(); // Reload goals from local storage
     setShowNewGoal(false);
   };
 
-  const handleGoalUpdated = () => {
-    // Reload goals from local storage and update state
-    const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
-    setGoals(storedGoals);
+  const handleGoalUpdated = (updatedGoal) => {
+    const updatedGoals = goals.map(goal => 
+      goal.id === updatedGoal.id ? updatedGoal : goal
+    );
+    setGoals(updatedGoals);
+    localStorage.setItem('goals', JSON.stringify(updatedGoals));
   };
 
-  // const handleTimeAdded = (newTime) => {
-  //   fetchTimes(); // Reload times from local storage
-  //   fetchWeeklySummary();
-  // };
+  const handleTimeAdded = (newTime) => {
+    fetchTimes(); // Reload times from local storage
+    fetchWeeklySummary();
+  };
 
   const handleTimeDeleted = (id) => {
     const updatedTimes = times.filter(time => time.id !== id);
@@ -117,6 +140,7 @@ const App = () => {
           <Goals
             goals={goals}
             onSelectGoal={setActiveGoal}
+            onDeleteGoal={fetchGoals}
             onAddGoalClick={() => setShowNewGoal(true)}
             onEditGoalClick={setEditingGoal}
           />
@@ -124,7 +148,7 @@ const App = () => {
           {editingGoal && (
             <EditGoalModal
               goal={editingGoal}
-              onGoalUpdated={handleGoalUpdated}  // Updated prop
+              onGoalUpdated={handleGoalUpdated}
               onClose={() => setEditingGoal(null)}
             />
           )}
