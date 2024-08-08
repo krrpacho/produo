@@ -10,7 +10,7 @@ const CalendarComponent = ({ times, onTimeDeleted }) => {
 
   const handleDelete = async (id) => {
     try {
-      console.log('Attempting to delete time with ID:', id);
+      console.log('Deleting time with ID:', id);
       const response = await axiosInstance.delete(`/api/times/${id}`);
       if (response.status === 204) {
         alert('Time deleted successfully!');
@@ -25,7 +25,6 @@ const CalendarComponent = ({ times, onTimeDeleted }) => {
   };
 
   const renderEventContent = (eventInfo) => {
-    console.log('Event Info:', eventInfo);
     return (
       <div className="event-content">
         <div className="event-info">
@@ -60,4 +59,5 @@ const CalendarComponent = ({ times, onTimeDeleted }) => {
   );
 };
 
-export default CalendarComponent;
+export default CalendarComponent;//kinda
+

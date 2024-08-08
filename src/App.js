@@ -97,6 +97,7 @@ const App = () => {
       return updatedTimes;
     });
   };
+  
 
   const switchChart = (chartType) => {
     setCurrentChart(chartType);
@@ -169,4 +170,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default App;//
