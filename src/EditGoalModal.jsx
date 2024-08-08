@@ -14,7 +14,7 @@ const EditGoalModal = ({ goal, onGoalUpdated, onClose }) => {
       const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
       const updatedGoals = storedGoals.map(g => g.id === goal.id ? updatedGoal : g);
       localStorage.setItem('goals', JSON.stringify(updatedGoals));
-      onGoalUpdated(updatedGoals);
+      onGoalUpdated(updatedGoals); // Pass updated goals back
       onClose();
     } catch (error) {
       console.error('Error updating goal:', error);
@@ -71,4 +71,4 @@ const EditGoalModal = ({ goal, onGoalUpdated, onClose }) => {
   );
 };
 
-export default EditGoalModal;//
+export default EditGoalModal;

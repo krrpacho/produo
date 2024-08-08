@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import './Goals.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import './Goals.css';
 
 const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
   const [goals, setGoals] = useState([]);
 
   useEffect(() => {
-    // Retrieve goals from local storage
     const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
     setGoals(storedGoals);
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem('goals', JSON.stringify(goals));
+  }, [goals]);
 
   const handleDelete = (goalId) => {
     const updatedGoals = goals.filter(goal => goal.id !== goalId);
@@ -25,10 +28,10 @@ const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
         <h1 style={{ color: '#ffffff' }}>Your goals:</h1>
         <ul>
           {goals.map(goal => (
-            <li 
-              key={goal.id} 
-              style={{ backgroundColor: goal.color }} 
-              className="goal-item" 
+            <li
+              key={goal.id}
+              style={{ backgroundColor: goal.color }}
+              className="goal-item"
               onClick={() => onSelectGoal(goal)}
             >
               <span>{goal.name}</span>
@@ -57,4 +60,4 @@ const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
   );
 };
 
-export default Goals;//
+export default Goals;

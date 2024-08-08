@@ -83,7 +83,7 @@ const App = () => {
   };
 
   const handleGoalUpdated = (updatedGoals) => {
-    setGoals(updatedGoals);
+    setGoals(updatedGoals); // Update the goals state
   };
 
   const handleTimeAdded = (newTime) => {
@@ -140,7 +140,7 @@ const App = () => {
               {editingGoal && (
                 <EditGoalModal
                   goal={editingGoal}
-                  onGoalUpdated={handleGoalUpdated}
+                  onGoalUpdated={handleGoalUpdated} // Update here
                   onClose={() => setEditingGoal(null)}
                 />
               )}
