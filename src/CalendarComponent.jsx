@@ -1,37 +1,34 @@
 import React, { useEffect, useState } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import axiosInstance from './axiosConfig';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import './CalendarComponent.css';
 
-const CalendarComponent = ({ onTimeDeleted }) => {
-  const [times, setTimes] = useState([]);
+const CalendarComponent = ({ times, onTimeDeleted }) => {
+  const [events, setEvents] = useState([]);
 
-  // Load times from local storage
   useEffect(() => {
-    const savedTimes = JSON.parse(localStorage.getItem('times')) || [];
-    setTimes(savedTimes);
-  }, []);
-
-  // Save times to local storage
-  useEffect(() => {
-    localStorage.setItem('times', JSON.stringify(times));
+    const updatedEvents = times.map(time => ({
+      id: time.id,
+      title: time.elapsedTime,
+      start: time.date,
+      color: time.color
+    }));
+    setEvents(updatedEvents);
   }, [times]);
 
-  const handleDelete = async (id) => {
+  const handleDelete = (id) => {
     try {
-      console.log('Deleting time with ID:', id);
-      const response = await axiosInstance.delete(`/api/times/${id}`);
-      if (response.status === 204) {
-        alert('Time deleted successfully!');
-        const updatedTimes = times.filter(time => time.id !== id);
-        setTimes(updatedTimes);
-        onTimeDeleted(id);
-      } else {
-        alert('Failed to delete time.');
-      }
+      // Notify parent component to update state
+      onTimeDeleted(id);
+
+      // Remove time from local storage
+      const storedTimes = JSON.parse(localStorage.getItem('times')) || [];
+      const updatedTimes = storedTimes.filter(time => time.id !== id);
+      localStorage.setItem('times', JSON.stringify(updatedTimes));
+
+      alert('Time deleted successfully!');
     } catch (error) {
       console.error('Error deleting time:', error);
       alert('Failed to delete time.');
@@ -53,13 +50,6 @@ const CalendarComponent = ({ onTimeDeleted }) => {
       </div>
     );
   };
-
-  const events = times.map(time => ({
-    id: time.id,
-    title: time.elapsedTime,
-    start: time.date,
-    color: time.color
-  }));
 
   return (
     <div className="calendar-container">
