@@ -1,34 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
+import axiosInstance from './axiosConfig';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import './CalendarComponent.css';
 
 const CalendarComponent = ({ times, onTimeDeleted }) => {
-  const [events, setEvents] = useState([]);
 
-  useEffect(() => {
-    const updatedEvents = times.map(time => ({
-      id: time.id,
-      title: time.elapsedTime,
-      start: time.date,
-      color: time.color
-    }));
-    setEvents(updatedEvents);
-  }, [times]);
-
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     try {
-      // Notify parent component to update state
-      onTimeDeleted(id);
-
-      // Remove time from local storage
-      const storedTimes = JSON.parse(localStorage.getItem('times')) || [];
-      const updatedTimes = storedTimes.filter(time => time.id !== id);
-      localStorage.setItem('times', JSON.stringify(updatedTimes));
-
-      alert('Time deleted successfully!');
+      console.log('Deleting time with ID:', id);
+      const response = await axiosInstance.delete(`/api/times/${id}`);
+      if (response.status === 204) {
+        alert('Time deleted successfully!');
+        onTimeDeleted(id);
+      } else {
+        alert('Failed to delete time.');
+      }
     } catch (error) {
       console.error('Error deleting time:', error);
       alert('Failed to delete time.');
@@ -51,6 +40,13 @@ const CalendarComponent = ({ times, onTimeDeleted }) => {
     );
   };
 
+  const events = times.map(time => ({
+    id: time.id,
+    title: time.elapsedTime,
+    start: time.date,
+    color: time.color
+  }));
+
   return (
     <div className="calendar-container">
       <FullCalendar
@@ -64,3 +60,4 @@ const CalendarComponent = ({ times, onTimeDeleted }) => {
 };
 
 export default CalendarComponent;
+

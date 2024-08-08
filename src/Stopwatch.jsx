@@ -26,27 +26,18 @@ const Stopwatch = ({ activeGoal, onTimeAdded }) => {
     setIsActive(false);
     try {
       const date = new Date().toISOString().split('T')[0];
-      const elapsedTime = `${Math.floor(time / 60)}m ${time % 60}s`;
-      const newTimeEntry = {
-        elapsedTime,
-        date,
+      const response = await axiosInstance.post('/api/times', {
+        elapsedTime: `${Math.floor(time / 60)}m ${time % 60}s`,
+        date: date,
         goalName: activeGoal.name,
         color: activeGoal.color,
-      };
-
-      // Update local storage
-      const storedTimes = JSON.parse(localStorage.getItem('times')) || [];
-      const updatedTimes = [...storedTimes, newTimeEntry];
-      localStorage.setItem('times', JSON.stringify(updatedTimes));
-
-      // Notify parent component about the new time entry
-      onTimeAdded(newTimeEntry);
-
-      // Reset stopwatch
-      setTime(0);
+      });
+      alert('Time saved successfully!');
+      onTimeAdded(response.data);
     } catch (error) {
       console.error('Error saving time:', error);
     }
+    setTime(0);
   };
 
   const hours = Math.floor(time / 3600);
