@@ -28,6 +28,14 @@ const CalendarComponent = ({ times, onTimeDeleted }) => {
       const updatedTimes = storedTimes.filter(time => time.id !== id);
       localStorage.setItem('times', JSON.stringify(updatedTimes));
 
+      // Update state
+      setEvents(updatedTimes.map(time => ({
+        id: time.id,
+        title: time.elapsedTime,
+        start: time.date,
+        color: time.color
+      })));
+
       alert('Time deleted successfully!');
     } catch (error) {
       console.error('Error deleting time:', error);
@@ -63,4 +71,4 @@ const CalendarComponent = ({ times, onTimeDeleted }) => {
   );
 };
 
-export default CalendarComponent;//
+export default CalendarComponent;
