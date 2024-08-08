@@ -19,23 +19,29 @@ const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
     alert('Goal deleted successfully!');
   };
 
+  const handleEditClick = (goal) => {
+    onEditGoalClick(goal);
+  };
+
   return (
-    <div className="rect">
-      <div className="goals-container">
-        <h1 style={{ color: '#ffffff' }}>Your goals:</h1>
-        <ul>
+    <div className="goals-container">
+      <button className="add-goal-btn" onClick={onAddGoalClick}>
+        Add New Goal
+      </button>
+      {goals.length > 0 ? (
+        <ul className="goals-list">
           {goals.map(goal => (
-            <li 
-              key={goal.id} 
-              style={{ backgroundColor: goal.color }} 
-              className="goal-item" 
-              onClick={() => onSelectGoal(goal)}
-            >
-              <span>{goal.name}</span>
+            <li key={goal.id} className="goal-item" style={{ backgroundColor: goal.color }}>
+              <div className="goal-info" onClick={() => onSelectGoal(goal)}>
+                <div className="goal-name" style={{ color: goal.color }}>
+                  {goal.name}
+                </div>
+                <div className="goal-time">{goal.targetTime}</div>
+              </div>
               <div className="icons">
                 <FontAwesomeIcon
                   icon={faEdit}
-                  onClick={(e) => { e.stopPropagation(); onEditGoalClick(goal); }}
+                  onClick={(e) => { e.stopPropagation(); handleEditClick(goal); }}
                   className="edit-icon"
                 />
                 <FontAwesomeIcon
@@ -47,12 +53,9 @@ const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
             </li>
           ))}
         </ul>
-      </div>
-      <div className="goals-footer">
-        <button className="add-goals" onClick={onAddGoalClick}>
-          <span className="plus-symbol">+</span>
-        </button>
-      </div>
+      ) : (
+        <p>No goals available.</p>
+      )}
     </div>
   );
 };

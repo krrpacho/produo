@@ -82,6 +82,10 @@ const App = () => {
     setShowNewGoal(false);
   };
 
+  const handleGoalUpdated = (updatedGoals) => {
+    setGoals(updatedGoals);
+  };
+
   const handleTimeAdded = (newTime) => {
     fetchTimes();
     fetchWeeklySummary();
@@ -136,7 +140,7 @@ const App = () => {
               {editingGoal && (
                 <EditGoalModal
                   goal={editingGoal}
-                  onGoalUpdated={(updatedGoals) => setGoals(updatedGoals)}
+                  onGoalUpdated={handleGoalUpdated} // Pass the function to EditGoalModal
                   onClose={() => setEditingGoal(null)}
                 />
               )}

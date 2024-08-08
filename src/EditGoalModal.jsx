@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import axiosInstance from './axiosConfig';
 import './EditGoalModal.css';
 
 const EditGoalModal = ({ goal, onGoalUpdated, onClose }) => {
@@ -14,7 +13,7 @@ const EditGoalModal = ({ goal, onGoalUpdated, onClose }) => {
       const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
       const updatedGoals = storedGoals.map(g => g.id === goal.id ? updatedGoal : g);
       localStorage.setItem('goals', JSON.stringify(updatedGoals));
-      onGoalUpdated(updatedGoals);
+      onGoalUpdated(updatedGoals); // Update the parent component with new goals
       onClose();
     } catch (error) {
       console.error('Error updating goal:', error);
