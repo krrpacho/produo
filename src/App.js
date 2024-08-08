@@ -82,10 +82,6 @@ const App = () => {
     setShowNewGoal(false);
   };
 
-  const handleGoalUpdated = (updatedGoals) => {
-    setGoals(updatedGoals);
-  };
-
   const handleTimeAdded = (newTime) => {
     fetchTimes();
     fetchWeeklySummary();
@@ -129,34 +125,28 @@ const App = () => {
     <div className={`app-container ${isNavbarOpen ? 'navbar-open' : 'navbar-collapsed'}`}>
       <Navbar onScrollToSection={scrollToSection} toggleNavbar={toggleNavbar} />
       <div className="main-content">
-        <div ref={goalSectionRef}>
-          {showNewGoal ? (
-            <NewGoals
-              onGoalSaved={handleGoalSaved}
-              onCancel={() => setShowNewGoal(false)}
+        <div ref={goalSectionRef} className="goal-section">
+          <Goals
+            goals={goals}
+            onSelectGoal={setActiveGoal}
+            onDeleteGoal={fetchGoals}
+            onAddGoalClick={() => setShowNewGoal(true)}
+            onEditGoalClick={setEditingGoal}
+          />
+          {showNewGoal && <NewGoals onGoalSaved={handleGoalSaved} onClose={() => setShowNewGoal(false)} />}
+          {editingGoal && (
+            <EditGoalModal
+              goal={editingGoal}
+              onGoalUpdated={fetchGoals}
+              onClose={() => setEditingGoal(null)}
             />
-          ) : (
-            <>
-              {editingGoal && (
-                <EditGoalModal
-                  goal={editingGoal}
-                  onGoalUpdated={handleGoalUpdated}
-                  onClose={() => setEditingGoal(null)}
-                />
-              )}
-              <Goals
-                onSelectGoal={(goal) => setActiveGoal(goal)}
-                onAddGoalClick={() => setShowNewGoal(true)}
-                onEditGoalClick={(goal) => setEditingGoal(goal)}
-              />
-            </>
           )}
         </div>
         <div ref={stopwatchSectionRef} className="stopwatch-section">
           <Stopwatch activeGoal={activeGoal} onTimeAdded={handleTimeAdded} />
         </div>
         <div ref={calendarSectionRef} className="calendar-section">
-          <CalendarComponent times={times} onTimeDeleted={handleTimeDeleted} />
+          <CalendarComponent times={times} onTimeDeleted={fetchTimes} />
         </div>
         <div ref={chartSectionRef} className="chart-section">
           {currentChart === 'weekly' && <ChartComponent weeklyData={weeklyData} onSwitchChart={() => switchChart('monthly')} />}
