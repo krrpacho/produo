@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import axiosInstance from './axiosConfig';
 import Goals from './Goals';
 import NewGoals from './NewGoals';
 import EditGoalModal from './EditGoalModal';
@@ -81,6 +82,10 @@ const App = () => {
     setShowNewGoal(false);
   };
 
+  const handleGoalUpdated = (updatedGoals) => {
+    setGoals(updatedGoals);
+  };
+
   const handleTimeAdded = (newTime) => {
     fetchTimes();
     fetchWeeklySummary();
@@ -135,7 +140,7 @@ const App = () => {
               {editingGoal && (
                 <EditGoalModal
                   goal={editingGoal}
-                  onGoalUpdated={(updatedGoals) => setGoals(updatedGoals)}
+                  onGoalUpdated={handleGoalUpdated}
                   onClose={() => setEditingGoal(null)}
                 />
               )}
@@ -143,7 +148,6 @@ const App = () => {
                 onSelectGoal={(goal) => setActiveGoal(goal)}
                 onAddGoalClick={() => setShowNewGoal(true)}
                 onEditGoalClick={(goal) => setEditingGoal(goal)}
-                goals={goals}  // Pass goals as a prop
               />
             </>
           )}
