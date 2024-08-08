@@ -77,11 +77,11 @@ const App = () => {
     }
   };
 
-  const handleGoalSaved = (updatedGoals) => {
-    setGoals(updatedGoals);
+  const handleGoalSaved = () => {
+    fetchGoals(); // Refresh the goals list
     setShowNewGoal(false);
   };
-
+  
   const handleTimeAdded = (newTime) => {
     fetchTimes();
     fetchWeeklySummary();
@@ -144,8 +144,6 @@ const App = () => {
                 onSelectGoal={(goal) => setActiveGoal(goal)}
                 onAddGoalClick={() => setShowNewGoal(true)}
                 onEditGoalClick={(goal) => setEditingGoal(goal)}
-                goals={goals}
-                setGoals={setGoals}
               />
             </>
           )}
@@ -167,4 +165,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default App;//old

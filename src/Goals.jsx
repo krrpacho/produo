@@ -3,11 +3,14 @@ import './Goals.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
 
-const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick, goals, setGoals }) => {
+const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
+  const [goals, setGoals] = useState([]);
+
   useEffect(() => {
+    // Retrieve goals from local storage
     const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
     setGoals(storedGoals);
-  }, [setGoals]);
+  }, []);
 
   const handleDelete = (goalId) => {
     const updatedGoals = goals.filter(goal => goal.id !== goalId);
