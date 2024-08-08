@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
+import axiosInstance from './axiosConfig';
 import Goals from './Goals';
 import NewGoals from './NewGoals';
 import EditGoalModal from './EditGoalModal';
@@ -67,7 +67,7 @@ const App = () => {
 
   const fetchWeeklySummary = async () => {
     try {
-      const response = await axios.get('/api/times/weekly-summary');
+      const response = await axiosInstance.get('/api/times/weekly-summary');
       const summary = response.data;
       const labels = Object.keys(summary);
       const data = Object.values(summary).map(seconds => seconds / 60); 
@@ -77,13 +77,9 @@ const App = () => {
     }
   };
 
-  const handleGoalSaved = () => {
-    fetchGoals();
-    setShowNewGoal(false);
-  };
-
-  const handleGoalUpdated = (updatedGoals) => {
+  const handleGoalSaved = (updatedGoals) => {
     setGoals(updatedGoals);
+    setShowNewGoal(false);
   };
 
   const handleTimeAdded = (newTime) => {
@@ -133,14 +129,14 @@ const App = () => {
           {showNewGoal ? (
             <NewGoals
               onGoalSaved={handleGoalSaved}
-              onClose={() => setShowNewGoal(false)}
+              onCancel={() => setShowNewGoal(false)}
             />
           ) : (
             <>
               {editingGoal && (
                 <EditGoalModal
                   goal={editingGoal}
-                  onGoalUpdated={handleGoalUpdated}
+                  onGoalUpdated={(updatedGoals) => setGoals(updatedGoals)}
                   onClose={() => setEditingGoal(null)}
                 />
               )}
@@ -148,6 +144,8 @@ const App = () => {
                 onSelectGoal={(goal) => setActiveGoal(goal)}
                 onAddGoalClick={() => setShowNewGoal(true)}
                 onEditGoalClick={(goal) => setEditingGoal(goal)}
+                goals={goals}
+                setGoals={setGoals}
               />
             </>
           )}

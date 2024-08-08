@@ -3,23 +3,16 @@ import './Goals.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
 
-const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
-  const [goals, setGoals] = useState([]);
-
+const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick, goals, setGoals }) => {
   useEffect(() => {
-    // Retrieve goals from local storage
     const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
     setGoals(storedGoals);
-  }, []);
-
-  useEffect(() => {
-    // Sync goals with local storage
-    localStorage.setItem('goals', JSON.stringify(goals));
-  }, [goals]);
+  }, [setGoals]);
 
   const handleDelete = (goalId) => {
     const updatedGoals = goals.filter(goal => goal.id !== goalId);
     setGoals(updatedGoals);
+    localStorage.setItem('goals', JSON.stringify(updatedGoals));
     alert('Goal deleted successfully!');
   };
 
