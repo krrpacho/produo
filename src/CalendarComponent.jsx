@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
+import interactionPlugin from '@fullcalendar/interaction'; // Import interaction plugin for handling event clicks
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faPlus } from '@fortawesome/free-solid-svg-icons';
 import './CalendarComponent.css';
 
-const CalendarComponent = ({ times, onTimeDeleted }) => {
+const CalendarComponent = ({ times, onTimeDeleted, onTimeAdded }) => {
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
@@ -35,6 +36,30 @@ const CalendarComponent = ({ times, onTimeDeleted }) => {
     }
   };
 
+  const handleAdd = (info) => {
+    const newTime = {
+      id: new Date().toISOString(), // Generate a unique ID
+      elapsedTime: 'New Event',
+      date: info.startStr,
+      color: '#FF9F00' // Default color
+    };
+
+    try {
+      // Notify parent component to update state
+      onTimeAdded(newTime);
+
+      // Update local storage
+      const storedTimes = JSON.parse(localStorage.getItem('times')) || [];
+      storedTimes.push(newTime);
+      localStorage.setItem('times', JSON.stringify(storedTimes));
+
+      alert('Time added successfully!');
+    } catch (error) {
+      console.error('Error adding time:', error);
+      alert('Failed to add time.');
+    }
+  };
+
   const renderEventContent = (eventInfo) => {
     return (
       <div className="event-content">
@@ -54,10 +79,11 @@ const CalendarComponent = ({ times, onTimeDeleted }) => {
   return (
     <div className="calendar-container">
       <FullCalendar
-        plugins={[dayGridPlugin]}
+        plugins={[dayGridPlugin, interactionPlugin]} // Add interaction plugin
         initialView="dayGridMonth"
         events={events}
         eventContent={renderEventContent}
+        dateClick={handleAdd} // Handle adding event on date click
       />
     </div>
   );
