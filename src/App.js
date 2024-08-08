@@ -121,6 +121,10 @@ const App = () => {
     setIsNavbarOpen(!isNavbarOpen);
   };
 
+  const handleGoalUpdated = (updatedGoals) => {
+    setGoals(updatedGoals);
+  };
+
   return (
     <div className={`app-container ${isNavbarOpen ? 'navbar-open' : 'navbar-collapsed'}`}>
       <Navbar onScrollToSection={scrollToSection} toggleNavbar={toggleNavbar} />
@@ -136,16 +140,15 @@ const App = () => {
               {editingGoal && (
                 <EditGoalModal
                   goal={editingGoal}
-                  onGoalUpdated={(updatedGoals) => setGoals(updatedGoals)}
+                  onGoalUpdated={handleGoalUpdated}
                   onClose={() => setEditingGoal(null)}
                 />
               )}
               <Goals
-                goals={goals}
-                setGoals={setGoals}
                 onSelectGoal={(goal) => setActiveGoal(goal)}
                 onAddGoalClick={() => setShowNewGoal(true)}
                 onEditGoalClick={(goal) => setEditingGoal(goal)}
+                onGoalUpdated={handleGoalUpdated}
               />
             </>
           )}

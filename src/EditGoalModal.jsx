@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axiosInstance from './axiosConfig';
 import './EditGoalModal.css';
 
 const EditGoalModal = ({ goal, onGoalUpdated, onClose }) => {
@@ -70,4 +71,4 @@ const EditGoalModal = ({ goal, onGoalUpdated, onClose }) => {
   );
 };
 
-export default EditGoalModal;
+export default EditGoalModal;//
