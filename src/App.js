@@ -57,31 +57,17 @@ const App = () => {
     localStorage.setItem('currentChart', currentChart);
   }, [currentChart]);
 
-  const fetchGoals = () => {
+  const handleGoalSaved = () => {
+    // Reload goals from local storage and update state
     const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
     setGoals(storedGoals);
-  };
-
-  const fetchTimes = () => {
-    const storedTimes = JSON.parse(localStorage.getItem('times')) || [];
-    setTimes(storedTimes);
-  };
-
-  const fetchWeeklySummary = async () => {
-    try {
-      const response = await axiosInstance.get('/api/times/weekly-summary');
-      const summary = response.data;
-      const labels = Object.keys(summary);
-      const data = Object.values(summary).map(seconds => seconds / 60); 
-      setWeeklyData({ labels, data });
-    } catch (error) {
-      console.error('Error fetching weekly summary:', error);
-    }
-  };
-
-  const handleGoalSaved = () => {
-    fetchGoals(); // Reload goals from local storage
     setShowNewGoal(false);
+  };
+
+  const handleGoalUpdated = () => {
+    // Reload goals from local storage and update state
+    const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
+    setGoals(storedGoals);
   };
 
   const handleTimeAdded = (newTime) => {
@@ -138,7 +124,7 @@ const App = () => {
           {editingGoal && (
             <EditGoalModal
               goal={editingGoal}
-              onGoalUpdated={fetchGoals}
+              onGoalUpdated={handleGoalUpdated}  // Updated prop
               onClose={() => setEditingGoal(null)}
             />
           )}
