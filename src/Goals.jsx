@@ -14,8 +14,8 @@ const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
 
   const handleDelete = (goalId) => {
     const updatedGoals = goals.filter(goal => goal.id !== goalId);
-    setGoals(updatedGoals);
     localStorage.setItem('goals', JSON.stringify(updatedGoals));
+    onEditGoalClick(updatedGoals);  // Update parent component state
     alert('Goal deleted successfully!');
   };
 
