@@ -13,7 +13,7 @@ const CalendarComponent = ({ times, onTimeDeleted }) => {
       const response = await axiosInstance.delete(`/api/times/${id}`);
       if (response.status === 204) {
         alert('Time deleted successfully!');
-        onTimeDeleted(id); // Trigger re-render of the calendar
+        onTimeDeleted(id); 
       } else {
         alert('Failed to delete time.');
       }
@@ -32,7 +32,7 @@ const CalendarComponent = ({ times, onTimeDeleted }) => {
         </div>
         <FontAwesomeIcon
           icon={faTrash}
-          onClick={() => handleDelete(eventInfo.event.extendedProps.timeId)} // Use extendedProps for correct ID
+          onClick={() => handleDelete(eventInfo.event.extendedProps.timeId)} 
           className="delete-icon"
         />
       </div>
@@ -40,12 +40,12 @@ const CalendarComponent = ({ times, onTimeDeleted }) => {
   };
 
   const events = times.map(time => ({
-    id: time.id, // This should be unique and match your database record ID
+    id: time.id,
     title: time.elapsedTime,
     start: time.date,
     color: time.color,
     extendedProps: {
-      timeId: time.id, // Ensure this is the correct ID for deletion
+      timeId: time.id, 
     }
   }));
 
@@ -56,7 +56,7 @@ const CalendarComponent = ({ times, onTimeDeleted }) => {
         initialView="dayGridMonth"
         events={events}
         eventContent={renderEventContent}
-        eventDisplay="block" // Ensure events are rendered properly
+        eventDisplay="block" 
       />
     </div>
   );

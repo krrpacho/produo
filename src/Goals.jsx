@@ -7,7 +7,6 @@ const Goals = ({ onSelectGoal, onAddGoalClick, onEditGoalClick }) => {
   const [goals, setGoals] = useState([]);
 
   useEffect(() => {
-    // Retrieve goals from local storage
     const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
     setGoals(storedGoals);
   }, []);
