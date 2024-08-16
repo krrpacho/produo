@@ -141,8 +141,9 @@ const App = () => {
               {editingGoal && (
                 <EditGoalModal
                   goal={editingGoal}
-                  onGoalUpdated={fetchGoals}
+                  onGoalUpdated={handleSubmit}
                   onClose={() => setEditingGoal(null)}
+                  
                 />
               )}
               <Goals
