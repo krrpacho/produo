@@ -9,7 +9,7 @@ import ChartComponent from './ChartComponent';
 import MonthlyBarChart from './MonthlyBarChart';
 import YearlyBarChart from './YearlyBarChart';
 import Navbar from './Navbar';
-import Footer from './Footer';
+import Footer from './Footer';  
 import './App.css';
 
 const App = () => {
@@ -27,7 +27,6 @@ const App = () => {
   const calendarSectionRef = useRef(null);
   const chartSectionRef = useRef(null);
 
-  // Fetch initial data from local storage
   useEffect(() => {
     const savedGoals = JSON.parse(localStorage.getItem('goals')) || [];
     const savedTimes = JSON.parse(localStorage.getItem('times')) || [];
@@ -40,7 +39,6 @@ const App = () => {
     setCurrentChart(savedCurrentChart);
   }, []);
 
-  // Update local storage when data changes
   useEffect(() => {
     localStorage.setItem('goals', JSON.stringify(goals));
   }, [goals]);
@@ -57,24 +55,71 @@ const App = () => {
     localStorage.setItem('currentChart', currentChart);
   }, [currentChart]);
 
-  const handleTimeDeleted = (id) => {
-    setTimes(prevTimes => {
-      const updatedTimes = prevTimes.filter(time => time.id !== id);
-      localStorage.setItem('times', JSON.stringify(updatedTimes)); // Update local storage
-      return updatedTimes;
-    });
+  const fetchGoals = () => {
+    const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
+    setGoals(storedGoals);
   };
 
-  const handleGoalSaved = (newGoal) => {
-    setGoals([...goals, newGoal]);
+  const fetchTimes = () => {
+    const storedTimes = JSON.parse(localStorage.getItem('times')) || [];
+    setTimes(storedTimes);
+  };
+
+  const fetchWeeklySummary = async () => {
+    try {
+      const response = await axiosInstance.get('/api/times/weekly-summary');
+      const summary = response.data;
+      const labels = Object.keys(summary);
+      const data = Object.values(summary).map(seconds => seconds / 60); 
+      setWeeklyData({ labels, data });
+    } catch (error) {
+      console.error('Error fetching weekly summary:', error);
+    }
+  };
+
+  const handleGoalSaved = () => {
+    fetchGoals();
+    setShowNewGoal(false);
   };
 
   const handleTimeAdded = (newTime) => {
-    setTimes([...times, newTime]);
+    setTimes(prevTimes => {
+      const updatedTimes = [...prevTimes, newTime];
+      localStorage.setItem('times', JSON.stringify(updatedTimes));
+      return updatedTimes;
+    });
+  };
+  
+  const handleTimeDeleted = (id) => {
+    setTimes(prevTimes => {
+      const updatedTimes = prevTimes.filter(time => time.id !== id);
+      localStorage.setItem('times', JSON.stringify(updatedTimes));
+      return updatedTimes;
+    });
+  };
+  
+
+  const switchChart = (chartType) => {
+    setCurrentChart(chartType);
   };
 
-  const scrollToSection = (ref) => {
-    ref.current.scrollIntoView({ behavior: 'smooth' });
+  const scrollToSection = (section) => {
+    switch (section) {
+      case 'goalSection':
+        goalSectionRef.current.scrollIntoView({ behavior: 'smooth' });
+        break;
+      case 'stopwatchSection':
+        stopwatchSectionRef.current.scrollIntoView({ behavior: 'smooth' });
+        break;
+      case 'calendarSection':
+        calendarSectionRef.current.scrollIntoView({ behavior: 'smooth' });
+        break;
+      case 'chartSection':
+        chartSectionRef.current.scrollIntoView({ behavior: 'smooth' });
+        break;
+      default:
+        break;
+    }
   };
 
   const toggleNavbar = () => {
@@ -89,7 +134,7 @@ const App = () => {
           {showNewGoal ? (
             <NewGoals
               onGoalSaved={handleGoalSaved}
-              onCancel={() => setShowNewGoal(false)}
+              onClose={() => setShowNewGoal(false)}
             />
           ) : (
             <>
@@ -115,14 +160,14 @@ const App = () => {
           <CalendarComponent times={times} onTimeDeleted={handleTimeDeleted} />
         </div>
         <div ref={chartSectionRef} className="chart-section">
-          {currentChart === 'weekly' && <ChartComponent weeklyData={weeklyData} onSwitchChart={() => setCurrentChart('monthly')} />}
-          {currentChart === 'monthly' && <MonthlyBarChart onSwitchChart={() => setCurrentChart('yearly')} />}
-          {currentChart === 'yearly' && <YearlyBarChart onSwitchChart={() => setCurrentChart('weekly')} />}
+          {currentChart === 'weekly' && <ChartComponent weeklyData={weeklyData} onSwitchChart={() => switchChart('monthly')} />}
+          {currentChart === 'monthly' && <MonthlyBarChart onSwitchChart={() => switchChart('yearly')} />}
+          {currentChart === 'yearly' && <YearlyBarChart onSwitchChart={() => switchChart('weekly')} />}
         </div>
-        <Footer />
+        <Footer />  
       </div>
     </div>
   );
 };
 
-export default App;
+export default App;//
