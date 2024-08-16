@@ -19,9 +19,10 @@ const ChartComponent = ({ onSwitchChart }) => {
   const fetchWeeklyData = async (weeksAgo) => {
     try {
       const response = await axiosInstance.get(`/api/times/weekly-summary?weeksAgo=${weeksAgo}`);
-      const data = response.data || {};
+      const data = response.data;
       const labels = daysOfWeek;
-      const values = labels.map(day => (data[day] || 0) / 60);  // Ensure valid data
+      // Ensure that data[day] exists and is a number
+      const values = labels.map(day => (data[day] || 0) / 60); 
       setWeeklyData({ labels, data: values });
       setDateRange(calculateDateRange(weeksAgo));
     } catch (error) {
@@ -45,7 +46,7 @@ const ChartComponent = ({ onSwitchChart }) => {
   };
 
   useEffect(() => {
-    if (chartRef.current && weeklyData.data.length > 0) {
+    if (chartRef.current && weeklyData.labels.length > 0) {
       const ctx = chartRef.current.getContext('2d');
 
       if (chartInstanceRef.current) {
@@ -69,15 +70,15 @@ const ChartComponent = ({ onSwitchChart }) => {
             y: {
               beginAtZero: true,
               ticks: {
-                color: 'white'
+                color: 'white' 
               },
               grid: {
-                color: 'white'
+                color: 'white' 
               }
             },
             x: {
               ticks: {
-                color: 'white'
+                color: 'white' 
               },
               grid: {
                 color: 'white'
@@ -87,7 +88,7 @@ const ChartComponent = ({ onSwitchChart }) => {
           plugins: {
             legend: {
               labels: {
-                color: 'white'
+                color: 'white' 
               }
             }
           }
@@ -115,7 +116,7 @@ const ChartComponent = ({ onSwitchChart }) => {
         <div className="buttons">
           <button onClick={handlePreviousWeek}>{'<'}</button>
           <button onClick={handleNextWeek} disabled={weeksAgo === 0}>{'>'}</button>
-          <button onClick={onSwitchChart}>Switch Chart</button>
+          <button onClick={onSwitchChart}>Weekly Chart</button>
         </div>
       </div>
       <canvas ref={chartRef}></canvas>
@@ -123,4 +124,4 @@ const ChartComponent = ({ onSwitchChart }) => {
   );
 };
 
-export default ChartComponent;
+export default ChartComponent;//
