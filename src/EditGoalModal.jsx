@@ -12,24 +12,15 @@ const EditGoalModal = ({ goal, onGoalUpdated, onClose }) => {
     try {
       const updatedGoal = { ...goal, name, targetTime, color };
       const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
-      
-      // Update the goals array
       const updatedGoals = storedGoals.map(g => g.id === goal.id ? updatedGoal : g);
-      
-      // Save the updated goals array to localStorage
-      localStorage.setItem('goals', JSON.stringify(updatedGoals));
-      
-      // Update the state with the updated goals array
+      localStorage.setItem('goals', JSON.stringify(updatedGoal));
       onGoalUpdated(updatedGoals);
-      
-      // Close the modal
       onClose();
     } catch (error) {
       console.error('Error updating goal:', error);
       alert('Failed to update goal.');
     }
   };
-  
 
   return (
     <div className="modal-overlay">
