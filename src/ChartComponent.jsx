@@ -11,27 +11,25 @@ const ChartComponent = ({ onSwitchChart }) => {
   const [weeklyData, setWeeklyData] = useState({ labels: [], data: [] });
   const [weeksAgo, setWeeksAgo] = useState(0);
   const [dateRange, setDateRange] = useState('');
-  const userId = localStorage.getItem('userId') || generateUserId();
+  const userId = localStorage.getItem('userId'); // Get the user's ID from local storage
 
   useEffect(() => {
     fetchWeeklyData(weeksAgo);
   }, [weeksAgo]);
 
-  const generateUserId = () => {
-    const newUserId = `user-${Math.random().toString(36).substr(2, 9)}`;
-    localStorage.setItem('userId', newUserId);
-    return newUserId;
-  };
-
   const fetchWeeklyData = async (weeksAgo) => {
     try {
-      const response = await axiosInstance.get(`/api/times/weekly-summary?userId=${userId}&weeksAgo=${weeksAgo}`);
+      const response = await axiosInstance.get(`/api/times/weekly-summary?weeksAgo=${weeksAgo}`);
       const data = response.data;
       const labels = daysOfWeek;
       const values = labels.map(day => (data[day] || 0) / 60);
-      setWeeklyData({ labels, data: values });
+
+      // Store data associated with the current user
+      const userWeeklyData = { labels, data: values };
+      localStorage.setItem(`weeklyData_${userId}_${weeksAgo}`, JSON.stringify(userWeeklyData));
+
+      setWeeklyData(userWeeklyData);
       setDateRange(calculateDateRange(weeksAgo));
-      localStorage.setItem(`weeklyData-${userId}-${weeksAgo}`, JSON.stringify({ labels, data: values }));
     } catch (error) {
       console.error('Error fetching weekly summary:', error);
     }
@@ -77,15 +75,15 @@ const ChartComponent = ({ onSwitchChart }) => {
             y: {
               beginAtZero: true,
               ticks: {
-                color: 'white'
+                color: 'white' 
               },
               grid: {
-                color: 'white'
+                color: 'white' 
               }
             },
             x: {
               ticks: {
-                color: 'white'
+                color: 'white' 
               },
               grid: {
                 color: 'white'
@@ -95,7 +93,7 @@ const ChartComponent = ({ onSwitchChart }) => {
           plugins: {
             legend: {
               labels: {
-                color: 'white'
+                color: 'white' 
               }
             }
           }
@@ -106,11 +104,22 @@ const ChartComponent = ({ onSwitchChart }) => {
 
   const handlePreviousWeek = () => {
     setWeeksAgo(weeksAgo + 1);
+    loadLocalStorageData(weeksAgo + 1);
   };
 
   const handleNextWeek = () => {
     if (weeksAgo > 0) {
       setWeeksAgo(weeksAgo - 1);
+      loadLocalStorageData(weeksAgo - 1);
+    }
+  };
+
+  const loadLocalStorageData = (weeksAgo) => {
+    const savedData = JSON.parse(localStorage.getItem(`weeklyData_${userId}_${weeksAgo}`));
+    if (savedData) {
+      setWeeklyData(savedData);
+    } else {
+      fetchWeeklyData(weeksAgo);
     }
   };
 
