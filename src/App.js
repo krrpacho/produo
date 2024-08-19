@@ -78,7 +78,7 @@ const App = () => {
   };
 
   const handleGoalSaved = () => {
-    fetchGoals();
+    //fetchGoals();
     setShowNewGoal(false);
   };
 
