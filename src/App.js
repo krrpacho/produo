@@ -55,10 +55,10 @@ const App = () => {
     localStorage.setItem('currentChart', currentChart);
   }, [currentChart]);
 
-  // const fetchGoals = () => {
-  //   const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
-  //   setGoals(storedGoals);
-  // };
+  const fetchGoals = () => {
+    const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
+    setGoals(storedGoals);
+  };
 
   const fetchTimes = () => {
     const storedTimes = JSON.parse(localStorage.getItem('times')) || [];
@@ -78,7 +78,7 @@ const App = () => {
   };
 
   const handleGoalSaved = () => {
-    //fetchGoals();
+    fetchGoals();
     setShowNewGoal(false);
   };
 
