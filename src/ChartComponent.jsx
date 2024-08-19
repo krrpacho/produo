@@ -12,19 +12,25 @@ const ChartComponent = ({ onSwitchChart }) => {
   const [weeksAgo, setWeeksAgo] = useState(0);
   const [dateRange, setDateRange] = useState('');
 
+  // Retrieve user ID from local storage or create a new one if not found
+  const userId = localStorage.getItem('userId') || `user-${Date.now()}`;
+  localStorage.setItem('userId', userId);
+
   useEffect(() => {
     fetchWeeklyData(weeksAgo);
   }, [weeksAgo]);
 
   const fetchWeeklyData = async (weeksAgo) => {
     try {
-      const response = await axiosInstance.get(`/api/times/weekly-summary?weeksAgo=${weeksAgo}`);
+      const response = await axiosInstance.get(`/api/times/weekly-summary?weeksAgo=${weeksAgo}&userId=${userId}`);
       const data = response.data;
       const labels = daysOfWeek;
-      // Ensure that data[day] exists and is a number
-      const values = labels.map(day => (data[day] || 0) / 60); 
+      const values = labels.map(day => (data[day] || 0) / 60);
       setWeeklyData({ labels, data: values });
       setDateRange(calculateDateRange(weeksAgo));
+
+      // Save user-specific weekly data to local storage
+      localStorage.setItem(`weeklyData-${userId}`, JSON.stringify({ labels, data: values }));
     } catch (error) {
       console.error('Error fetching weekly summary:', error);
     }
@@ -124,4 +130,4 @@ const ChartComponent = ({ onSwitchChart }) => {
   );
 };
 
-export default ChartComponent;//
+export default ChartComponent;
