@@ -7,6 +7,21 @@ const Stopwatch = ({ activeGoal, onTimeAdded }) => {
   const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
+    // Retrieve saved state from localStorage on mount
+    const savedTime = parseInt(localStorage.getItem('stopwatchTime'), 10);
+    const savedIsActive = JSON.parse(localStorage.getItem('stopwatchIsActive'));
+    const savedActiveGoal = JSON.parse(localStorage.getItem('stopwatchActiveGoal'));
+
+    if (savedTime) setTime(savedTime);
+    if (savedIsActive) setIsActive(savedIsActive);
+    if (savedActiveGoal && !activeGoal) {
+      // You might need to adjust this if activeGoal is passed as a prop
+      // For now, it will only update if activeGoal is null or undefined
+      activeGoal = savedActiveGoal;
+    }
+  }, []);
+
+  useEffect(() => {
     let interval = null;
     if (isActive) {
       interval = setInterval(() => {
@@ -17,6 +32,13 @@ const Stopwatch = ({ activeGoal, onTimeAdded }) => {
     }
     return () => clearInterval(interval);
   }, [isActive, time]);
+
+  useEffect(() => {
+    // Save the current state to localStorage whenever it changes
+    localStorage.setItem('stopwatchTime', time);
+    localStorage.setItem('stopwatchIsActive', JSON.stringify(isActive));
+    localStorage.setItem('stopwatchActiveGoal', JSON.stringify(activeGoal));
+  }, [time, isActive, activeGoal]);
 
   const handleStartStop = () => {
     setIsActive(!isActive);
@@ -37,7 +59,11 @@ const Stopwatch = ({ activeGoal, onTimeAdded }) => {
     } catch (error) {
       console.error('Error saving time:', error);
     }
+    // Clear the timer and reset the stored state
     setTime(0);
+    localStorage.removeItem('stopwatchTime');
+    localStorage.removeItem('stopwatchIsActive');
+    localStorage.removeItem('stopwatchActiveGoal');
   };
 
   const hours = Math.floor(time / 3600);
