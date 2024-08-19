@@ -11,26 +11,27 @@ const ChartComponent = ({ onSwitchChart }) => {
   const [weeklyData, setWeeklyData] = useState({ labels: [], data: [] });
   const [weeksAgo, setWeeksAgo] = useState(0);
   const [dateRange, setDateRange] = useState('');
-
-  // Retrieve user ID from local storage or create a new one if not found
-  const userId = localStorage.getItem('userId') || `user-${Date.now()}`;
-  localStorage.setItem('userId', userId);
+  const userId = localStorage.getItem('userId') || generateUserId();
 
   useEffect(() => {
     fetchWeeklyData(weeksAgo);
   }, [weeksAgo]);
 
+  const generateUserId = () => {
+    const newUserId = `user-${Math.random().toString(36).substr(2, 9)}`;
+    localStorage.setItem('userId', newUserId);
+    return newUserId;
+  };
+
   const fetchWeeklyData = async (weeksAgo) => {
     try {
-      const response = await axiosInstance.get(`/api/times/weekly-summary?weeksAgo=${weeksAgo}&userId=${userId}`);
+      const response = await axiosInstance.get(`/api/times/weekly-summary?userId=${userId}&weeksAgo=${weeksAgo}`);
       const data = response.data;
       const labels = daysOfWeek;
       const values = labels.map(day => (data[day] || 0) / 60);
       setWeeklyData({ labels, data: values });
       setDateRange(calculateDateRange(weeksAgo));
-
-      // Save user-specific weekly data to local storage
-      localStorage.setItem(`weeklyData-${userId}`, JSON.stringify({ labels, data: values }));
+      localStorage.setItem(`weeklyData-${userId}-${weeksAgo}`, JSON.stringify({ labels, data: values }));
     } catch (error) {
       console.error('Error fetching weekly summary:', error);
     }
@@ -76,15 +77,15 @@ const ChartComponent = ({ onSwitchChart }) => {
             y: {
               beginAtZero: true,
               ticks: {
-                color: 'white' 
+                color: 'white'
               },
               grid: {
-                color: 'white' 
+                color: 'white'
               }
             },
             x: {
               ticks: {
-                color: 'white' 
+                color: 'white'
               },
               grid: {
                 color: 'white'
@@ -94,7 +95,7 @@ const ChartComponent = ({ onSwitchChart }) => {
           plugins: {
             legend: {
               labels: {
-                color: 'white' 
+                color: 'white'
               }
             }
           }
