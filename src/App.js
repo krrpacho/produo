@@ -9,7 +9,7 @@ import ChartComponent from './ChartComponent';
 import MonthlyBarChart from './MonthlyBarChart';
 import YearlyBarChart from './YearlyBarChart';
 import Navbar from './Navbar';
-import Footer from './Footer';
+import Footer from './Footer';  
 import './App.css';
 
 const App = () => {
@@ -55,18 +55,31 @@ const App = () => {
     localStorage.setItem('currentChart', currentChart);
   }, [currentChart]);
 
+  // const fetchGoals = () => {
+  //   const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
+  //   setGoals(storedGoals);
+  // };
+
+  const fetchTimes = () => {
+    const storedTimes = JSON.parse(localStorage.getItem('times')) || [];
+    setTimes(storedTimes);
+  };
+
+  const fetchWeeklySummary = async () => {
+    try {
+      const response = await axiosInstance.get('/api/times/weekly-summary');
+      const summary = response.data;
+      const labels = Object.keys(summary);
+      const data = Object.values(summary).map(seconds => seconds / 60); 
+      setWeeklyData({ labels, data });
+    } catch (error) {
+      console.error('Error fetching weekly summary:', error);
+    }
+  };
+
   const handleGoalSaved = () => {
     fetchGoals();
     setShowNewGoal(false);
-  };
-
-  const handleGoalUpdated = (updatedGoal) => {
-    setGoals(prevGoals => {
-      const updatedGoals = prevGoals.map(g => g.id === updatedGoal.id ? updatedGoal : g);
-      localStorage.setItem('goals', JSON.stringify(updatedGoals));
-      return updatedGoals;
-    });
-    setEditingGoal(null);
   };
 
   const handleTimeAdded = (newTime) => {
@@ -76,7 +89,7 @@ const App = () => {
       return updatedTimes;
     });
   };
-
+  
   const handleTimeDeleted = (id) => {
     setTimes(prevTimes => {
       const updatedTimes = prevTimes.filter(time => time.id !== id);
@@ -84,6 +97,7 @@ const App = () => {
       return updatedTimes;
     });
   };
+  
 
   const switchChart = (chartType) => {
     setCurrentChart(chartType);
@@ -127,8 +141,9 @@ const App = () => {
               {editingGoal && (
                 <EditGoalModal
                   goal={editingGoal}
-                  onGoalUpdated={handleGoalUpdated}  // Ensure this function is called
+                  onGoalUpdated={(updatedGoals) => setGoals(updatedGoals)}
                   onClose={() => setEditingGoal(null)}
+                  
                 />
               )}
               <Goals
@@ -150,10 +165,10 @@ const App = () => {
           {currentChart === 'monthly' && <MonthlyBarChart onSwitchChart={() => switchChart('yearly')} />}
           {currentChart === 'yearly' && <YearlyBarChart onSwitchChart={() => switchChart('weekly')} />}
         </div>
-        <Footer />
+        <Footer />  
       </div>
     </div>
   );
 };
 
-export default App;
+export default App;//
