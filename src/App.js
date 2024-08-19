@@ -89,7 +89,7 @@ const App = () => {
       return updatedTimes;
     });
   };
-  
+
   const handleTimeDeleted = (id) => {
     setTimes(prevTimes => {
       const updatedTimes = prevTimes.filter(time => time.id !== id);
@@ -97,7 +97,6 @@ const App = () => {
       return updatedTimes;
     });
   };
-  
 
   const switchChart = (chartType) => {
     setCurrentChart(chartType);
@@ -143,7 +142,6 @@ const App = () => {
                   goal={editingGoal}
                   onGoalUpdated={(updatedGoals) => setGoals(updatedGoals)}
                   onClose={() => setEditingGoal(null)}
-                  
                 />
               )}
               <Goals
@@ -171,4 +169,4 @@ const App = () => {
   );
 };
 
-export default App;//
+export default App;
