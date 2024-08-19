@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import axiosInstance from './axiosConfig';
 import './stopwatch.css';
 
-const Stopwatch = ({ activeGoal, onTimeAdded }) => {
+const Stopwatch = ({ activeGoal: propActiveGoal, onTimeAdded }) => {
   const [time, setTime] = useState(0);
   const [isActive, setIsActive] = useState(false);
+  const [activeGoal, setActiveGoal] = useState(propActiveGoal);
 
   useEffect(() => {
     // Retrieve saved state from localStorage on mount
@@ -14,11 +15,7 @@ const Stopwatch = ({ activeGoal, onTimeAdded }) => {
 
     if (savedTime) setTime(savedTime);
     if (savedIsActive) setIsActive(savedIsActive);
-    if (savedActiveGoal && !activeGoal) {
-      // You might need to adjust this if activeGoal is passed as a prop
-      // For now, it will only update if activeGoal is null or undefined
-      activeGoal = savedActiveGoal;
-    }
+    if (savedActiveGoal) setActiveGoal(savedActiveGoal);
   }, []);
 
   useEffect(() => {
@@ -39,6 +36,13 @@ const Stopwatch = ({ activeGoal, onTimeAdded }) => {
     localStorage.setItem('stopwatchIsActive', JSON.stringify(isActive));
     localStorage.setItem('stopwatchActiveGoal', JSON.stringify(activeGoal));
   }, [time, isActive, activeGoal]);
+
+  useEffect(() => {
+    // Update activeGoal if propActiveGoal changes
+    if (propActiveGoal) {
+      setActiveGoal(propActiveGoal);
+    }
+  }, [propActiveGoal]);
 
   const handleStartStop = () => {
     setIsActive(!isActive);
