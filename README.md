@@ -1,4 +1,5 @@
-Produo Frontend
+# Produo Frontend
+
 This repository contains the frontend code for the Produo productivity app, a platform designed to help users stay focused, motivated, and productive throughout the day. The frontend is built using React and interacts with the backend API to provide a seamless user experience.
 
 Features
