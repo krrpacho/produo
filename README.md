@@ -13,6 +13,9 @@ Local Storage: Instead of traditional user authentication, Produo uses local sto
 
 Responsive Design: The UI is fully responsive, providing a smooth experience on both desktop and mobile devices.
 
+## Contact
+For any questions or support, please reach out to krrpacho@gmail.com
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
