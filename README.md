@@ -8,6 +8,7 @@ User Interface: A clean and intuitive UI that allows users to manage their goals
 Goal Management: Users can create, edit, and delete goals directly from the interface.
 
 Time Tracking: Users can log the time spent on tasks and visualize their progress through charts and summaries.
+
 Local Storage: Instead of traditional user authentication, Produo uses local storage to separate user data, ensuring that each user's information is kept distinct on their device.
 
 Responsive Design: The UI is fully responsive, providing a smooth experience on both desktop and mobile devices.
