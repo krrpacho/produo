@@ -13,6 +13,12 @@ Local Storage: Instead of traditional user authentication, Produo uses local sto
 
 Responsive Design: The UI is fully responsive, providing a smooth experience on both desktop and mobile devices.
 
+## Contributing
+
+Contributions to this project are welcome! If you'd like to contribute, please follow these guidelines:
+- **Fork the repository** and create a pull request with your changes.
+- **Submit issues** for any bugs or feature requests.
+- 
 ## Contact
 For any questions or support, please reach out to krrpacho@gmail.com
 
